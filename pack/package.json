@@ -1,0 +1,47 @@
+{
+  "name": "imengyu-Qiyukf",
+  "id": "imengyu-Qiyukf",
+  "version": "1.0.0",
+  "description": "七鱼客服扩展模块",
+  "_dp_type": "nativeplugin",
+  "_dp_nativeplugin": {
+    "android": {
+      "plugins": [
+        {
+          "type": "module",
+          "name": "imengyu-Qiyukf-QiyukfModule",
+          "class": "uni.imengyu.qiyu.QiyukfModule"
+        }
+      ],
+      "integrateType": "aar",
+      "minSdkVersion": "21",
+			"hooksClass": "uni.imengyu.qiyu.AppProxy",
+			"dependencies": [ 
+        "com.qiyukf.unicorn:unicorn:7.1.0",
+        "com.squareup.okhttp3:okhttp:4.9.3",
+        "com.zhy:okhttputils:2.6.2"
+			],
+      "parameters": {
+        "appid_android": {
+          "des": "七鱼SDK的appid参数",
+          "key": "ImengyuQiyukf_APPID",
+          "placeholder": "QIYU_APPID"
+        }
+      }
+    },
+		"ios": {
+			"plugins": [{
+				"type": "module",
+				"name": "imengyu-YdtNative-QiyukfModule",
+				"class": "QiyukfModule"
+			}],
+			"frameworks": [
+				"NIMSDK.framework",
+				"QYSDK.framework",
+				"MapKit.framework"
+			],
+			"integrateType": "framework",
+			"deploymentTarget": "9.0"
+		}
+  }
+}

@@ -1,0 +1,93 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion '28.0.3'
+    defaultConfig {
+        applicationId "com.ydt.ydtapp.app"
+        minSdkVersion 21
+        targetSdkVersion 29 //建议此属性值设为21 io.dcloud.PandoraEntry 作为apk入口时   必须设置 targetSDKVersion>=21 沉浸式才生效
+
+        versionCode 22
+        versionName "0.6.6"
+        ndk {
+            abiFilters 'arm64-v8a','armeabi-v7a'
+        }
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
+        buildConfigField("boolean", "enableLog", "true")
+    }
+
+    android {compileOptions.encoding = "GBK"}
+
+    ndkVersion '21.4.7075529'
+    signingConfigs {
+        debug {
+            keyAlias 'ydtapp.keystore'
+            keyPassword 'ttswl123'
+            storeFile file('D:\\Work\\ydtapp.keystore')
+            storePassword 'ttswl123'
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+        config {
+            keyAlias 'ydtapp.keystore'
+            keyPassword 'ttswl123'
+            storeFile file('D:\\Work\\ydtapp.keystore')
+            storePassword 'ttswl123'
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.config
+            zipAlignEnabled true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable false
+        }
+        debug {
+            signingConfig signingConfigs.config
+            zipAlignEnabled false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable true
+        }
+    }
+    //使用uniapp时，需复制下面代码
+    /*代码开始*/
+    aaptOptions {
+        additionalParameters '--auto-add-overlay'
+        //noCompress 'foo', 'bar'
+        ignoreAssetsPattern "!.svn:!.git:.*:!CVS:!thumbs.db:!picasa.ini:!*.scc:*~"
+    }
+    /*代码结束*/
+}
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.aar'])
+
+    implementation project(path: ':qiyu_module')
+
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+
+    /*uniapp所需库-----------------------开始*/
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'com.facebook.fresco:fresco:1.13.0'
+    implementation "com.facebook.fresco:animated-gif:1.13.0"
+    /*uniapp所需库-----------------------结束*/
+    // 基座需要，必须添加
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    implementation 'com.alibaba:fastjson:1.1.46.android'
+    // 添加uni-app插件
+}

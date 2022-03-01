@@ -1,0 +1,14 @@
+{
+  "nativePlugins": [
+    {
+      "hooksClass": "uni.imengyu.qiyu.AppProxy",
+      "plugins": [
+        {
+          "type": "module",
+          "name": "imengyu-Qiyukf-QiyukfModule",
+          "class": "uni.imengyu.qiyu.QiyukfModule"
+        }
+      ]
+    }
+  ]
+}

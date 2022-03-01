@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.ydt.ydtapp.app">
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!-- Barcode(二维码)  begin -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <!-- Barcode(二维码)  end -->
+
+    <application
+        android:name=".YdtApplication"
+        android:allowBackup="true"
+        android:allowClearUserData="true"
+        android:icon="@drawable/icon"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
+        tools:replace="android:name">
+
+        <!-- 应用入口 -->
+        <activity
+            android:name="io.dcloud.PandoraEntry"
+            android:theme="@style/TranslucentTheme"
+            android:configChanges="orientation|keyboardHidden|screenSize|mcc|mnc|fontScale"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <data android:scheme="hbuilder"/>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+            </intent-filter>
+            <intent-filter>
+                <data android:mimeType="image/*"/>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <meta-data android:name="dcloud_uninview_background" android:value="true"/>
+        <meta-data android:value="wx48e017f000ef72b4" android:name="WX_APPID"/>
+        <meta-data android:value="37409f6710785c21cd2deb7b4bd42966" android:name="WX_SECRET"/>
+
+        <!-- Amap start -->
+        <meta-data android:name="com.amap.api.v2.apikey" android:value="c8d469dfa62745e0f1fd058d9efc72ff" />
+<!--        <meta-data android:name="GETUI_APPID" android:value="" />-->
+<!--        <meta-data android:name="GY_APP_ID" android:value="" />-->
+<!--        <meta-data android:name="GT_INSTALL_CHANNEL" android:value="" />-->
+
+        <service android:name="com.amap.api.location.APSService" />
+        <!-- Amap end -->
+
+        <!-- Share QQ start -->
+        <meta-data android:value="1112047707" android:name="QQ_APPID"/>
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="1112047707"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.tencent.connect.common.AssistActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:screenOrientation="portrait" />
+        <!-- Share QQ end -->
+
+        <!-- Share - 新浪微博分享 start -->
+        <!-- 官方网站：http://open.weibo.com/ -->
+<!--        <meta-data android:name="SINA_APPKEY" android:value="_%新浪微博开放平台申请应用的Appkey，注意前面要添加下划线%" />-->
+<!--        <meta-data android:name="SINA_SECRET" android:value="%新浪微博开放平台申请应用的Secret%" />-->
+<!--        <meta-data android:name="SINA_REDIRECT_URI" android:value="%新浪微博开放平台申请应用配置的回调地址%" />-->
+<!--        <activity android:name="com.sina.weibo.sdk.web.WeiboSdkWebActivity"-->
+<!--            android:configChanges="keyboardHidden|orientation"-->
+<!--            android:exported="false"-->
+<!--            android:windowSoftInputMode="adjustResize">-->
+<!--        </activity>-->
+
+<!--        <activity android:name="com.sina.weibo.sdk.share.WbShareTransActivity"-->
+<!--            android:launchMode="singleTask"-->
+<!--            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
+        <!-- Share - 新浪微博分享 end -->
+
+        <activity android:name="com.ydt.ydtapp.app.wxapi.WXEntryActivity"
+            android:label="@string/app_name"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="wx48e017f000ef72b4"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.ydt.ydtapp.app.wxapi.WXPayEntryActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:launchMode="singleTop" />
+
+        <activity
+            android:name="io.dcloud.PandoraEntryActivity"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|keyboardHidden|screenSize|mcc|mnc|fontScale|keyboard"
+            android:hardwareAccelerated="true"
+            android:permission="com.miui.securitycenter.permission.AppPermissionsEditor"
+            android:screenOrientation="user"
+            android:theme="@style/DCloudTheme"
+            android:windowSoftInputMode="adjustResize">
+
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <action android:name="android.intent.action.VIEW" />
+                <data android:scheme=" " />
+            </intent-filter>
+        </activity>
+        <provider
+            android:name="io.dcloud.common.util.DCloud_FileProvider"
+            android:authorities="com.ydt.ydtapp.app.dc.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/dcloud_file_provider" />
+        </provider>
+
+        <!-- dcloud_appkey -->
+        <meta-data
+            android:name="dcloud_appkey"
+            android:value="ba9369e39280d5ee77ca1bd9ab7cf12a" />
+
+    </application>
+
+</manifest>
