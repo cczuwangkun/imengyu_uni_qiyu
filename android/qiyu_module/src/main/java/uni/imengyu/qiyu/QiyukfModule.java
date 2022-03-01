@@ -1,6 +1,7 @@
 package uni.imengyu.qiyu;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
@@ -12,6 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.qiyukf.nimlib.sdk.NimIntent;
 import com.qiyukf.nimlib.sdk.NotificationFoldStyle;
 import com.qiyukf.nimlib.sdk.RequestCallback;
+import com.qiyukf.nimlib.sdk.RequestCallbackWrapper;
 import com.qiyukf.nimlib.sdk.StatusBarNotificationConfig;
 import com.qiyukf.nimlib.sdk.msg.constant.NotificationExtraTypeEnum;
 import com.qiyukf.nimlib.sdk.msg.model.IMMessage;
@@ -27,11 +29,16 @@ import com.qiyukf.unicorn.api.customization.action.AlbumAction;
 import com.qiyukf.unicorn.api.customization.action.BaseAction;
 import com.qiyukf.unicorn.api.customization.action.CameraAction;
 import com.qiyukf.unicorn.api.customization.action.ImageAction;
+import com.qiyukf.unicorn.api.customization.action.InquireWorkSheetAction;
 import com.qiyukf.unicorn.api.customization.input.ActionListProvider;
 import com.qiyukf.unicorn.api.customization.input.ActionPanelOptions;
 import com.qiyukf.unicorn.api.customization.input.InputPanelOptions;
 import com.qiyukf.unicorn.api.customization.title_bar.OnTitleBarRightBtnClickListener;
 import com.qiyukf.unicorn.api.customization.title_bar.TitleBarConfig;
+import com.qiyukf.unicorn.api.evaluation.EvaluationApi;
+import com.qiyukf.unicorn.api.evaluation.entry.EvaluationOpenEntry;
+import com.qiyukf.unicorn.api.event.EventService;
+import com.qiyukf.unicorn.api.helper.UnicornWorkSheetHelper;
 import com.qiyukf.unicorn.api.lifecycle.SessionLifeCycleOptions;
 import com.qiyukf.unicorn.api.msg.MessageService;
 import com.qiyukf.unicorn.api.msg.UnicornMessageBuilder;
@@ -184,11 +191,11 @@ public class QiyukfModule extends WXModule {
     }
 
     /**
-     * 七鱼清除全部未读数（IOS）
+     * 七鱼清除全部未读数
      */
     @Keep
     @UniJSMethod()
-    public void clearUnreadCount() {}
+    public void clearUnreadCount() { POPManager.clearUnreadCount("-1");  }
 
     //Session的相关方法
     //=====================================================
@@ -461,6 +468,50 @@ public class QiyukfModule extends WXModule {
     //发送消息的相关方法
     //=====================================================
 
+    private ProductDetail jsonToProductDetail(JSONObject options) {
+        ProductDetail.Builder productDetail = new ProductDetail.Builder();
+
+        if(options.containsKey("title")) productDetail.setTitle(options.getString("title"));
+        if(options.containsKey("picture")) productDetail.setPicture(options.getString("picture"));
+        if(options.containsKey("desc")) productDetail.setDesc(options.getString("desc"));
+        if(options.containsKey("note")) productDetail.setNote(options.getString("note"));
+        if(options.containsKey("url")) productDetail.setUrl(options.getString("url"));
+        if(options.containsKey("show")) productDetail.setShow(options.getInteger("show"));
+        if(options.containsKey("alwaysSend")) productDetail.setAlwaysSend(options.getBoolean("alwaysSend"));
+        if(options.containsKey("openTemplate")) productDetail.setOpenTemplate(options.getBoolean("openTemplate"));
+        if(options.containsKey("sendByUser")) productDetail.setOpenTemplate(options.getBoolean("sendByUser"));
+        if(options.containsKey("actionText")) productDetail.setActionText(options.getString("actionText"));
+        if(options.containsKey("actionTextColor")) productDetail.setActionTextColor(UniResourceUtils.getColor(options.getString("actionTextColor")));
+        if(options.containsKey("isOpenReselect")) productDetail.setIsOpenReselect(options.getBoolean("isOpenReselect"));
+        if(options.containsKey("reselectText")) productDetail.setReselectText(options.getString("reselectText"));
+        if(options.containsKey("handlerTag")) productDetail.setHandlerTag(options.getString("handlerTag"));
+
+        if(options.containsKey("ext")) productDetail.setExt(options.getString("ext"));
+        if(options.containsKey("tags")) {
+            JSONArray tags = options.getJSONArray("tags");
+            List<ProductDetail.Tag> tagss = new ArrayList<>();
+            for (int i = 0; i < tags.size() ; i++) {
+                JSONObject o =  tags.getJSONObject(i);
+                ProductDetail.Tag t = new ProductDetail.Tag();
+
+                if(o.containsKey("data"))
+                    t.setData(o.getString("data"));
+                if(o.containsKey("focusIframe"))
+                    t.setFocusIframe(o.getString("focusIframe"));
+                if(o.containsKey("data"))
+                    t.setLabel(o.getString("label"));
+                if(o.containsKey("url"))
+                    t.setUrl(o.getString("url"));
+
+                tagss.add(t);
+            }
+            productDetail.setTags(tagss);
+
+        }
+
+        return productDetail.build();
+    }
+
     /**
      * 发送商品信息
      * @param options
@@ -476,27 +527,10 @@ public class QiyukfModule extends WXModule {
     @Keep
     @UniJSMethod()
     public void sendProductMessage(JSONObject options) {
-
-        ProductDetail.Builder productDetail = new ProductDetail.Builder();
-
-        if(options.containsKey("actionText")) productDetail.setActionText(options.getString("actionText"));
-        if(options.containsKey("actionTextColor")) productDetail.setActionTextColor(UniResourceUtils.getColor(options.getString("actionTextColor")));
-        if(options.containsKey("alwaysSend")) productDetail.setAlwaysSend(options.getBoolean("alwaysSend"));
-        if(options.containsKey("desc")) productDetail.setDesc(options.getString("desc"));
-        if(options.containsKey("ext")) productDetail.setExt(options.getString("ext"));
-        if(options.containsKey("handlerTag")) productDetail.setHandlerTag(options.getString("handlerTag"));
-        if(options.containsKey("picture")) productDetail.setPicture(options.getString("picture"));
-        if(options.containsKey("sendByUser")) productDetail.setSendByUser(options.getBoolean("sendByUser"));
-        if(options.containsKey("title")) productDetail.setTitle(options.getString("title"));
-        if(options.containsKey("note")) productDetail.setNote(options.getString("note"));
-        if(options.containsKey("url")) productDetail.setUrl(options.getString("url"));
-        if(options.containsKey("reselectText")) productDetail.setReselectText(options.getString("reselectText"));
-        if(options.containsKey("isOpenReselect")) productDetail.setIsOpenReselect(options.getBoolean("isOpenReselect"));
-
         if(options.containsKey("shopId"))
-            MessageService.sendProductMessage(productDetail.build());
+            MessageService.sendProductMessage(jsonToProductDetail(options));
         else
-            MessageService.sendProductMessage(options.getString("shopId"), productDetail.build());
+            MessageService.sendProductMessage(options.getString("shopId"), jsonToProductDetail(options));
     }
 
     /**
@@ -711,7 +745,7 @@ public class QiyukfModule extends WXModule {
      *                        canQuitQueue: boolean,
      *                        quitQueuePrompt: string,
      *                    },
-     *                    commodityInfo: {
+     *                    productDetail: {
      *
      *                    },
      *                    prompt: string, //弹出文字
@@ -772,6 +806,8 @@ public class QiyukfModule extends WXModule {
                 lifeCycleOptions.setQuitQueuePrompt(lifeCycleOptionsJson.getString("quitQueuePrompt"));
             source.sessionLifeCycleOptions = lifeCycleOptions;
         }
+        if(options.containsKey("productDetail"))
+            source.productDetail = jsonToProductDetail(options.getJSONObject("productDetail"));
 
         if(options.containsKey("prompt")) source.prompt = options.getString("prompt");
         if(options.containsKey("custom")) source.custom = options.getString("custom");
@@ -784,11 +820,12 @@ public class QiyukfModule extends WXModule {
         if(options.containsKey("robotFirst")) source.robotFirst = options.getBoolean("robotFirst");
         if(options.containsKey("robotWelcomeMsgId")) source.robotWelcomeMsgId = options.getString("robotWelcomeMsgId");
         if(options.containsKey("leaveMsgTemplateId")) source.robotWelcomeMsgId = options.getString("leaveMsgTemplateId");
+        if(options.containsKey("forbidUseCleanTopStart")) source.forbidUseCleanTopStart = options.getBoolean("forbidUseCleanTopStart");
 
         ConsultInstance instance = new ConsultInstance();
         instance.title = title;
         instance.ConsultSource = source;
-        instance.shopId = source.shopId;
+        instance.shopId = source.shopId != null ? source.shopId : "-1";
 
         openedConsultSource.put(key, instance);
         return "success";
@@ -823,8 +860,10 @@ public class QiyukfModule extends WXModule {
         String key = options.getString("key");
         if(openedConsultSource.containsKey(key)) {
             ConsultInstance consultInstance = openedConsultSource.get("key");
-            if(consultInstance.shopId != null && !"".equals(consultInstance.shopId))
+            if(consultInstance.shopId != null && !"".equals(consultInstance.shopId)) {
+                EventService.closeSession(consultInstance.shopId, options.containsKey("closeSessionMsg")?options.getString("closeSessionMsg"):"聊天已手动结束");
                 POPManager.deleteSession(consultInstance.shopId, false);
+            }
             openedConsultSource.remove(key);
         }
     }
@@ -843,6 +882,28 @@ public class QiyukfModule extends WXModule {
             createConsultSource(options);
 
         POPOpenService(options, eventBus);
+    }
+
+    /**
+     * 普通版关闭七鱼SDK客服窗口
+     */
+    @Keep
+    @UniJSMethod()
+    public void closeService(JSONObject options, final JSCallback callback) {
+        if(openedConsultSource.containsKey("InternalCs")) {
+            EventService.closeSession(UnicornMessageBuilder.getSessionId(), options.containsKey("closeSessionMsg")?options.getString("closeSessionMsg"):"聊天已手动结束");
+            openedConsultSource.remove("InternalCs");
+
+            JSONObject o = new JSONObject();
+            o.put("success", true);
+            o.put("errMsg", "ok");
+            callback.invoke(o);
+        } else {
+            JSONObject o = new JSONObject();
+            o.put("success", false);
+            o.put("errMsg", "Not opened");
+            callback.invoke(o);
+        }
     }
 
     /**
@@ -973,6 +1034,318 @@ public class QiyukfModule extends WXModule {
             result.put("errMsg", "Exception: " + e.getLocalizedMessage());
             eventBus.invoke(result);
         }
+    }
+
+    //评价的相关方法
+    //=====================================================
+
+    /**
+     * 平台版打开七鱼SDK开始评价
+     * @param options 参数:
+     *                {
+     *                    key: string, //createConsultSource创建的key
+     *                }
+     * @param callback 回调
+     */
+    @Keep
+    @UniJSMethod()
+    public void POPOpenEvaluation(JSONObject options, final JSCallback callback) {
+        if (options.containsKey("key")) {
+            String key = options.getString("key");
+            ConsultInstance consultInstance = openedConsultSource.get(key);
+            if (consultInstance != null) {
+
+                EventService.openEvaluation(
+                        (Activity) mWXSDKInstance.getContext(),
+                        consultInstance.shopId,
+                        new RequestCallbackWrapper<String>() {
+                            @Override
+                            public void onResult(int i, String o, Throwable throwable) {
+                                if(o != null) {
+                                    JSONObject result = new JSONObject();
+                                    result.put("errMsg", throwable != null ? throwable.toString() : "Unknow");
+                                    result.put("success", false);
+                                    callback.invoke(result);
+                                } else {
+                                    JSONObject result = new JSONObject();
+                                    result.put("errMsg", "ok");
+                                    result.put("result", i);
+                                    result.put("data", o);
+                                    result.put("success", true);
+                                    callback.invoke(result);
+                                }
+                            }
+                        });
+
+            } else {
+                JSONObject result = new JSONObject();
+                result.put("errMsg", "Not found " + key + ", use createConsultSource create it first");
+                result.put("success", false);
+                callback.invoke(result);
+            }
+
+        } else {
+            JSONObject result = new JSONObject();
+            result.put("success", false);
+            result.put("errMsg", "Param key must provide");
+            callback.invoke(result);
+        }
+    }
+
+    /**
+     * 普通台版打开七鱼SDK开始评价
+     * @param options 参数
+     * @param callback 回调
+     */
+    @Keep
+    @UniJSMethod()
+    public void openEvaluation(JSONObject options, final JSCallback callback) {
+        ConsultInstance consultInstance = openedConsultSource.get("InternalCs");
+        if (consultInstance != null) {
+            EventService.openEvaluation(
+                    (Activity) mWXSDKInstance.getContext(),
+                    UnicornMessageBuilder.getSessionId(),
+                    new RequestCallbackWrapper<String>() {
+                        @Override
+                        public void onResult(int i, String o, Throwable throwable) {
+                            if(o != null) {
+                                JSONObject result = new JSONObject();
+                                result.put("errMsg", throwable != null ? throwable.toString() : "Unknow");
+                                result.put("success", false);
+                                callback.invoke(result);
+                            } else {
+                                JSONObject result = new JSONObject();
+                                result.put("errMsg", "ok");
+                                result.put("result", i);
+                                result.put("data", o);
+                                result.put("success", true);
+                                callback.invoke(result);
+                            }
+                        }
+                    });
+
+        } else {
+            JSONObject result = new JSONObject();
+            result.put("errMsg", "Not open");
+            result.put("success", false);
+            callback.invoke(result);
+        }
+    }
+
+    /**
+     * 自定义评价界面进行评价
+     * @param options
+     * {
+     *    shopCode: string, - //商家ID， 在 EvaluationOpenEntry 里面有这个值，只需要回传就可以了
+     *    sessionId: string, - //会话 ID ，在 EvaluationOpenEntry 里面有这个值，只需要回传就可以了
+     *    score: number, - //评分
+     *    remark: string, - //评价内容
+     *    tagList: string, - //标签
+     *    name: string, - //评价结果的文案，例如非常满意、满意、不满意等
+     * }
+     * @param callback
+     * {
+     *
+     * }
+     */
+    @Keep
+    @UniJSMethod()
+    public void doCustomEvaluation(JSONObject options, final JSCallback callback) {
+
+        List<String> tags = new ArrayList<>();
+        if(options.containsKey("tagList")) {
+            JSONArray a = options.getJSONArray("tagList");
+            for (int i = 0; i < a.size(); i++)
+                tags.add(a.getString(i));
+        }
+
+        EvaluationApi.getInstance().evaluate(
+                options.getString("shopCode"),
+                options.getLong("sessionId"),
+                options.getInteger("score"),
+                options.getString("remark"),
+                tags,
+                options.getString("name"),
+                0,
+                new RequestCallbackWrapper<String>() {
+                    @Override
+                    public void onResult(int i, String s, Throwable throwable) {
+                        if(s != null) {
+                            JSONObject result = new JSONObject();
+                            result.put("errMsg", throwable != null ? throwable.toString() : "Unknow");
+                            result.put("success", false);
+                            callback.invoke(result);
+                        } else {
+                            JSONObject result = new JSONObject();
+                            result.put("errMsg", "ok");
+                            result.put("result", i);
+                            result.put("data", s);
+                            result.put("success", true);
+                            callback.invoke(result);
+                        }
+                    }
+                }
+        );
+    }
+
+    /**
+     * 设置自定义评价接口，只能设置一次，可使用deleteCustomEvaluation删除
+     * @param options {}
+     * @param callback
+     * {
+     *     type: 'EvaluationStateChange'|'EvaluationMessageClick',
+     *     state?: number,
+     *     entry?: EvaluationOpenEntry,
+     *     errMsg: string,
+     *     success: boolean,
+     * }
+     */
+    @Keep
+    @UniJSMethod()
+    public void setCustomEvaluation(JSONObject options, final JSCallback callback) {
+        EvaluationApi.getInstance().setOnEvaluationEventListener(new EvaluationApi.OnEvaluationEventListener() {
+            @Override
+            public void onEvaluationStateChange(int i) {
+                JSONObject result = new JSONObject();
+                result.put("errMsg", "ok");
+                result.put("type", "EvaluationStateChange");
+                result.put("state", i);
+                result.put("success", true);
+                callback.invoke(result);
+            }
+            @Override
+            public void onEvaluationMessageClick(EvaluationOpenEntry evaluationOpenEntry, Context context) {
+                JSONObject result = new JSONObject();
+                result.put("errMsg", "ok");
+                result.put("type", "EvaluationMessageClick");
+                result.put("entry", evaluationOpenEntry);
+                result.put("success", true);
+                callback.invoke(result);
+            }
+        });
+    }
+
+    /**
+     * 删除 setCustomEvaluation 设置的评价接口
+     */
+    @Keep
+    @UniJSMethod()
+    public void deleteCustomEvaluation() {
+        EvaluationApi.getInstance().setOnEvaluationEventListener(null);
+    }
+
+    //请求客服的相关方法
+    //=====================================================
+
+    /**
+     * 普通版请求客服
+     * @param options 参数
+     *                {
+     *                    hunmanOnly: boolean //是否只请求人工客服，true 则只请求人工客服 false 则为人工客服和机器人都可以 return 请求是否成功，有可能你当前的状态不需要请求客服，也有可能你已经在人工的状态了，那么也会返回 true
+     *                }
+     */
+    @Keep
+    @UniJSMethod()
+    public void requestStaff(JSONObject options) {
+        EventService.requestStaff(options.containsKey("hunmanOnly") ?
+                options.getBoolean("hunmanOnly") : false);
+    }
+
+    /**
+     * 请求客服2
+     * @param options 参数:
+     *                {
+     *                    shopId: string, //要操作的会话平台ID，普通版可以不传
+     *                    hunmanOnly: boolean, //是否只请求人工客服，true 则只请求人工客服 false 则为人工客服和机器人都可以 return 请求是否成功，有可能你当前的状态不需要请求客服，也有可能你已经在人工的状态了，那么也会返回 true
+     *                    requestStaffScenes? number, //请求客服的当前场景，因为现在请求客服事件可以进行拦截，这个值是与 RequestStaffEntry 中 scenes 中相对应的
+     *                    staffId: number,
+     *                    groupId: number,
+     *                }
+     */
+    @Keep
+    @UniJSMethod()
+    public void requestStaff2(JSONObject options) {
+        EventService.requestStaff(
+                options.containsKey("shopId") ? options.getString("shopId") : null,
+                options.getBoolean("hunmanOnly"),
+                options.getLong("staffId"),
+                options.getLong("groupId"),
+                options.getInteger("requestStaffScenes")
+        );
+    }
+
+    /**
+     * 转接客服的接口，在必要的时候可以通过此方法进行客服的转接 方法内部实现是，现结束当前客服的会话，然后在重新连接一下客服
+     * @param options 参数:
+     *                {
+     *                    shopId: string, //要操作的会话平台ID，普通版可以不传
+     *                    staffId: number, //想要转接的客服 id
+     *                    groupId: number, //想要转接的分组 id 如果同时设置 staffId 和 groupId 那么以 staffId 为主
+     *                    closeSessionMsg: string, //关闭客服的提示语
+     *                    isHuman: boolean, //转接客服是否只请求人工
+     *                }
+     */
+    @Keep
+    @UniJSMethod()
+    public void transferStaff(JSONObject options) {
+        EventService.transferStaff(
+                options.containsKey("shopId") ? options.getString("shopId") : null,
+                options.getLong("staffId"),
+                options.getLong("groupId"),
+                options.getString("closeSessionMsg"),
+                options.getBoolean("hunmanOnly"),
+                null, null
+        );
+    }
+
+    /**
+     * 自助启动查询工单界面
+     * @param options
+     * {
+     *    templateIds: number[], 工单模板 id
+     *    isOpenUrge: boolean, //是否打开催单功能
+     *    exchange: string, //如果是平台版本传递 shopId，如果是非平台可以为空
+     * }
+     */
+    @Keep
+    @UniJSMethod()
+    public void openUserWorkSheetActivity(JSONObject options) {
+
+        boolean isOpenUrge = false;
+        if(options.containsKey("isOpenUrge")) {
+            isOpenUrge = options.getBoolean("isOpenUrge");
+        }
+        String exchange;
+        if(options.containsKey("exchange"))
+            exchange = options.getString("exchange");
+        else
+            exchange = UnicornMessageBuilder.getSessionId();
+
+        List<Long> listTmpId = new ArrayList<>();
+        if(options.containsKey("templateIds")) {
+            JSONArray a = options.getJSONArray("templateIds");
+            for (int j = 0; j < a.size(); j++)
+                listTmpId.add(a.getLong(j));
+        }
+
+        UnicornWorkSheetHelper.openUserWorkSheetActivity(mWXSDKInstance.getContext(), listTmpId, isOpenUrge, exchange);
+    }
+
+    //排队的相关方法
+    //=====================================================
+
+    /**
+     * 七鱼SDK退出排队的方法
+     * @param options 参数
+     *                {
+     *                    shopId: string // 电商ID，如果是普通版可以不填
+     *                }
+     */
+    @Keep
+    @UniJSMethod()
+    public void quitQueue(JSONObject options) {
+        EventService.quitQueue(options.containsKey("shopId") ?
+                options.getString("shopId") : UnicornMessageBuilder.getSessionId());
     }
 
     //自定义的相关方法
@@ -1183,6 +1556,23 @@ public class QiyukfModule extends WXModule {
                                                 MResource.getIdByName(AppProxy.getAppContext(), "string", o.getString("titleId"))
                                         ));
                                         break;
+                                    case "InquireWorkSheet": {
+                                        InquireWorkSheetAction action = new InquireWorkSheetAction(
+                                                MResource.getIdByName(AppProxy.getAppContext(), "drawable", o.getString("iconResId")),
+                                                MResource.getIdByName(AppProxy.getAppContext(), "string", o.getString("titleId"))
+                                        );
+
+                                        List<Long> listTmpId = new ArrayList<>();
+                                        if(o.containsKey("templateIds")) {
+                                            JSONArray a = o.getJSONArray("templateIds");
+                                            for (int j = 0; j < a.size(); j++)
+                                                listTmpId.add(a.getLong(j));
+                                        }
+                                        action.setTemplateIds(listTmpId);
+
+                                        list.add(action);
+                                        break;
+                                    }
                                     case "Album":
                                         list.add(new AlbumAction(
                                                 MResource.getIdByName(AppProxy.getAppContext(), "drawable", o.getString("iconResId")),
@@ -1283,8 +1673,4 @@ public class QiyukfModule extends WXModule {
             }
         }
     }
-
-
-
-
 }
