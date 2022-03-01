@@ -10,7 +10,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.qiyukf.nimlib.sdk.NimIntent;
+import com.qiyukf.nimlib.sdk.NotificationFoldStyle;
 import com.qiyukf.nimlib.sdk.RequestCallback;
+import com.qiyukf.nimlib.sdk.StatusBarNotificationConfig;
+import com.qiyukf.nimlib.sdk.msg.constant.NotificationExtraTypeEnum;
 import com.qiyukf.nimlib.sdk.msg.model.IMMessage;
 import com.qiyukf.unicorn.api.ConsultSource;
 import com.qiyukf.unicorn.api.ProductDetail;
@@ -20,6 +23,16 @@ import com.qiyukf.unicorn.api.Unicorn;
 import com.qiyukf.unicorn.api.UnreadCountChangeListener;
 import com.qiyukf.unicorn.api.YSFOptions;
 import com.qiyukf.unicorn.api.YSFUserInfo;
+import com.qiyukf.unicorn.api.customization.action.AlbumAction;
+import com.qiyukf.unicorn.api.customization.action.BaseAction;
+import com.qiyukf.unicorn.api.customization.action.CameraAction;
+import com.qiyukf.unicorn.api.customization.action.ImageAction;
+import com.qiyukf.unicorn.api.customization.input.ActionListProvider;
+import com.qiyukf.unicorn.api.customization.input.ActionPanelOptions;
+import com.qiyukf.unicorn.api.customization.input.InputPanelOptions;
+import com.qiyukf.unicorn.api.customization.title_bar.OnTitleBarRightBtnClickListener;
+import com.qiyukf.unicorn.api.customization.title_bar.TitleBarConfig;
+import com.qiyukf.unicorn.api.lifecycle.SessionLifeCycleOptions;
 import com.qiyukf.unicorn.api.msg.MessageService;
 import com.qiyukf.unicorn.api.msg.UnicornMessageBuilder;
 import com.qiyukf.unicorn.api.pop.OnSessionListChangedListener;
@@ -693,6 +706,14 @@ public class QiyukfModule extends WXModule {
      *                            iconUrl: string, //快捷入口图标URL
      *                        }
      *                    }[], //快捷入口
+     *                    lifeCycleOptions: {
+     *                        canCloseSession: boolean,
+     *                        canQuitQueue: boolean,
+     *                        quitQueuePrompt: string,
+     *                    },
+     *                    commodityInfo: {
+     *
+     *                    },
      *                    prompt: string, //弹出文字
      *                    custom: string,
      *                    VIPStaffAvatarUrl: string,
@@ -737,6 +758,19 @@ public class QiyukfModule extends WXModule {
                 JSONObject o = quickEntryList.getJSONObject(i);
                 source.quickEntryList.add(new QuickEntry(o.getInteger("id"), o.getString("title"), o.getString("iconUrl")));
             }
+        }
+
+        if(options.containsKey("lifeCycleOptions")) {
+            JSONObject lifeCycleOptionsJson = options.getJSONObject("lifeCycleOptions");
+            SessionLifeCycleOptions lifeCycleOptions = new SessionLifeCycleOptions();
+
+            if(lifeCycleOptionsJson.containsKey("canCloseSession"))
+                lifeCycleOptions.setCanCloseSession(lifeCycleOptionsJson.getBoolean("canCloseSession"));
+            if(lifeCycleOptionsJson.containsKey("canQuitQueue"))
+                lifeCycleOptions.setCanQuitQueue(lifeCycleOptionsJson.getBoolean("canQuitQueue"));
+            if(lifeCycleOptionsJson.containsKey("quitQueuePrompt"))
+                lifeCycleOptions.setQuitQueuePrompt(lifeCycleOptionsJson.getString("quitQueuePrompt"));
+            source.sessionLifeCycleOptions = lifeCycleOptions;
         }
 
         if(options.containsKey("prompt")) source.prompt = options.getString("prompt");
@@ -952,7 +986,8 @@ public class QiyukfModule extends WXModule {
     @Keep
     @UniJSMethod()
     public void changeUICustomization(JSONObject options) {
-        UICustomization uiCustomization = QiyukfInit.getOptions().uiCustomization;
+        YSFOptions ysfOptions = QiyukfInit.getOptions();
+        UICustomization uiCustomization = ysfOptions.uiCustomization;
 
         if(options.containsKey("msgBackgroundUri"))
             uiCustomization.msgBackgroundUri = options.getString("msgBackgroundUri");
@@ -976,6 +1011,32 @@ public class QiyukfModule extends WXModule {
             uiCustomization.tipsTextColor = UniResourceUtils.getColor(options.getString("tipsTextColor"));
         if(options.containsKey("tipsTextSize"))
             uiCustomization.tipsTextSize = options.getFloat("tipsTextSize");
+
+        if(options.containsKey("msgItemBackgroundLeft"))
+            uiCustomization.msgItemBackgroundLeft = MResource.getIdByName(AppProxy.getAppContext(),"drawable", options.getString("msgItemBackgroundLeft"));
+        else
+            uiCustomization.msgItemBackgroundLeft = 0;
+        if(options.containsKey("msgItemBackgroundRight"))
+            uiCustomization.msgItemBackgroundRight = MResource.getIdByName(AppProxy.getAppContext(),"drawable", options.getString("msgItemBackgroundRight"));
+        else
+            uiCustomization.msgItemBackgroundRight = 0;
+        if(options.containsKey("msgRobotItemBackgroundLeft"))
+            uiCustomization.msgRobotItemBackgroundLeft = MResource.getIdByName(AppProxy.getAppContext(),"drawable", options.getString("msgRobotItemBackgroundLeft"));
+        else
+            uiCustomization.msgRobotItemBackgroundLeft = 0;
+        if(options.containsKey("msgRobotItemBackgroundRight"))
+            uiCustomization.msgRobotItemBackgroundRight = MResource.getIdByName(AppProxy.getAppContext(),"drawable", options.getString("msgRobotItemBackgroundRight"));
+        else
+            uiCustomization.msgRobotItemBackgroundRight = 0;
+        if(options.containsKey("audioMsgAnimationLeft"))
+            uiCustomization.audioMsgAnimationLeft = MResource.getIdByName(AppProxy.getAppContext(),"drawable", options.getString("audioMsgAnimationLeft"));
+        else
+            uiCustomization.audioMsgAnimationLeft = 0;
+        if(options.containsKey("audioMsgAnimationRight"))
+            uiCustomization.audioMsgAnimationRight = MResource.getIdByName(AppProxy.getAppContext(),"drawable", options.getString("audioMsgAnimationRight"));
+        else
+            uiCustomization.audioMsgAnimationRight = 0;
+
         if(options.containsKey("textMsgColorLeft"))
             uiCustomization.textMsgColorLeft = UniResourceUtils.getColor(options.getString("textMsgColorLeft"));
         if(options.containsKey("hyperLinkColorLeft"))
@@ -1003,7 +1064,9 @@ public class QiyukfModule extends WXModule {
         if(options.containsKey("titleCenter"))
             uiCustomization.titleCenter = options.getBoolean("titleCenter");
         if(options.containsKey("buttonTextColor"))
-            uiCustomization.buttonBackgroundColorList = R.color.qiyu_button_color_state_list;
+            uiCustomization.buttonBackgroundColorList = MResource.getIdByName(AppProxy.getAppContext(),"drawable", options.getString("buttonBackgroundColorList"));
+        else
+            uiCustomization.buttonBackgroundColorList = 0;
         if(options.containsKey("buttonTextColor"))
             uiCustomization.buttonTextColor = UniResourceUtils.getColor(options.getString("buttonTextColor"));
         if(options.containsKey("hideAudio"))
@@ -1016,10 +1079,212 @@ public class QiyukfModule extends WXModule {
             uiCustomization.screenOrientation = options.getInteger("screenOrientation");
         if(options.containsKey("hideKeyboardOnEnterConsult"))
             uiCustomization.hideKeyboardOnEnterConsult = options.getBoolean("hideKeyboardOnEnterConsult");
+        if(options.containsKey("robotBtnBack"))
+            uiCustomization.robotBtnBack = MResource.getIdByName(AppProxy.getAppContext(),"drawable", options.getString("robotBtnBack"));
+        else
+            uiCustomization.robotBtnBack = 0;
+        if(options.containsKey("robotBtnTextColor"))
+            uiCustomization.robotBtnTextColor = UniResourceUtils.getColor(options.getString("robotBtnTextColor"));
+        if(options.containsKey("inputUpBtnBack"))
+            uiCustomization.inputUpBtnBack = MResource.getIdByName(AppProxy.getAppContext(),"drawable", options.getString("inputUpBtnBack"));
+        else
+            uiCustomization.inputUpBtnBack = 0;
+        if(options.containsKey("inputUpBtnTextColor"))
+            uiCustomization.inputUpBtnTextColor = UniResourceUtils.getColor(options.getString("inputUpBtnTextColor"));
+        if(options.containsKey("loadingAnimationDrawable"))
+            uiCustomization.loadingAnimationDrawable = MResource.getIdByName(AppProxy.getAppContext(),"drawable", options.getString("loadingAnimationDrawable"));
+        else
+            uiCustomization.loadingAnimationDrawable = 0;
+        if(options.containsKey("editTextHint"))
+            uiCustomization.editTextHint = options.getString("editTextHint");
+
+        if(options.containsKey("titleBarConfig")) {
+            TitleBarConfig titleBarConfig = new TitleBarConfig();
+            JSONObject titleBarConfigJson = options.getJSONObject("titleBarConfig");
+
+            if(titleBarConfigJson.containsKey("titleBarRightQuitBtnBack"))
+                titleBarConfig.titleBarRightQuitBtnBack = MResource.getIdByName(AppProxy.getAppContext(),"drawable", titleBarConfigJson.getString("titleBarRightQuitBtnBack"));
+            if(titleBarConfigJson.containsKey("titleBarRightHumanBtnBack"))
+                titleBarConfig.titleBarRightHumanBtnBack = MResource.getIdByName(AppProxy.getAppContext(),"drawable", titleBarConfigJson.getString("titleBarRightHumanBtnBack"));
+            if(titleBarConfigJson.containsKey("titleBarRightEvaluatorBtnBack"))
+                titleBarConfig.titleBarRightEvaluatorBtnBack = MResource.getIdByName(AppProxy.getAppContext(),"drawable", titleBarConfigJson.getString("titleBarRightEvaluatorBtnBack"));
+            if(titleBarConfigJson.containsKey("titleBarRightImg"))
+                titleBarConfig.titleBarRightImg = MResource.getIdByName(AppProxy.getAppContext(),"drawable", titleBarConfigJson.getString("titleBarRightImg"));
+            if(titleBarConfigJson.containsKey("titleBarRightTextColor"))
+                titleBarConfig.titleBarRightTextColor = UniResourceUtils.getColor(titleBarConfigJson.getString("titleBarRightTextColor"));
+            if(titleBarConfigJson.containsKey("titleBarRightText"))
+                titleBarConfig.titleBarRightText = titleBarConfigJson.getString("titleBarRightText");
+
+            titleBarConfig.onTitleBarRightBtnClickListener = new OnTitleBarRightBtnClickListener() {
+                @Override
+                public void onClick(Activity activity) {
+                    Map<String, Object> params = new HashMap<>();
+                    Map<String, Object> detail = new HashMap<>();
+                    params.put("detail", detail);
+                    mUniSDKInstance.fireGlobalEventCallback("QiyuTitleBarRightBtnClick", params);
+                }
+            };
 
 
 
+            ysfOptions.titleBarConfig = titleBarConfig;
+        }
 
+        if(options.containsKey("inputPanelOptions")) {
+
+            InputPanelOptions inputPanelOptions = new InputPanelOptions();
+            JSONObject inputPanelOptionsJson = options.getJSONObject("inputPanelOptions");
+
+            if(inputPanelOptionsJson.containsKey("voiceIconResId"))
+                inputPanelOptions.voiceIconResId = MResource.getIdByName(AppProxy.getAppContext(),"drawable", inputPanelOptionsJson.getString("voiceIconResId"));
+            else
+                inputPanelOptions.voiceIconResId = 0;
+            if(inputPanelOptionsJson.containsKey("emojiIconResId"))
+                inputPanelOptions.emojiIconResId = MResource.getIdByName(AppProxy.getAppContext(),"drawable", inputPanelOptionsJson.getString("emojiIconResId"));
+            else
+                inputPanelOptions.emojiIconResId = 0;
+            if(inputPanelOptionsJson.containsKey("photoIconResId"))
+                inputPanelOptions.photoIconResId = MResource.getIdByName(AppProxy.getAppContext(),"drawable", inputPanelOptionsJson.getString("photoIconResId"));
+            else
+                inputPanelOptions.photoIconResId = 0;
+            if(inputPanelOptionsJson.containsKey("moreIconResId"))
+                inputPanelOptions.moreIconResId = MResource.getIdByName(AppProxy.getAppContext(),"drawable", inputPanelOptionsJson.getString("moreIconResId"));
+            else
+                inputPanelOptions.moreIconResId = 0;
+            if(inputPanelOptionsJson.containsKey("showActionPanel"))
+                inputPanelOptions.showActionPanel = inputPanelOptionsJson.getBoolean("showActionPanel");
+
+            if(options.containsKey("actionPanelOptions")) {
+
+                ActionPanelOptions actionPanelOptions = inputPanelOptions.actionPanelOptions;
+                JSONObject actionPanelOptionsJson = options.getJSONObject("inputPanelOptions");
+
+                if(actionPanelOptionsJson.containsKey("backgroundColor"))
+                    actionPanelOptions.backgroundColor = UniResourceUtils.getColor(options.getString("backgroundColor"));
+                if(actionPanelOptionsJson.containsKey("actionListProvider")) {
+
+                    JSONArray arr = actionPanelOptionsJson.getJSONArray("actionListProvider");
+                    actionPanelOptions.actionListProvider = new ActionListProvider() {
+                        @Override
+                        public List<BaseAction> getActionList() {
+                            List<BaseAction> list = new ArrayList<>();
+                            for (int i = 0; i < arr.size(); i++) {
+                                JSONObject o = arr.getJSONObject(i);
+                                switch (o.getString("type")) {
+                                    case "Image":
+                                        list.add(new ImageAction(
+                                                MResource.getIdByName(AppProxy.getAppContext(), "drawable", o.getString("iconResId")),
+                                                MResource.getIdByName(AppProxy.getAppContext(), "string", o.getString("titleId"))
+                                        ));
+                                        break;
+                                    case "Camera":
+                                        list.add(new CameraAction(
+                                                MResource.getIdByName(AppProxy.getAppContext(), "drawable", o.getString("iconResId")),
+                                                MResource.getIdByName(AppProxy.getAppContext(), "string", o.getString("titleId"))
+                                        ));
+                                        break;
+                                    case "Album":
+                                        list.add(new AlbumAction(
+                                                MResource.getIdByName(AppProxy.getAppContext(), "drawable", o.getString("iconResId")),
+                                                MResource.getIdByName(AppProxy.getAppContext(), "string", o.getString("titleId"))
+                                        ));
+                                        break;
+                                    case "Custom":
+                                        list.add(new BaseAction(
+                                                MResource.getIdByName(AppProxy.getAppContext(), "drawable", o.getString("iconResId")),
+                                                MResource.getIdByName(AppProxy.getAppContext(), "string", o.getString("titleId"))) {
+                                            @Override
+                                            public void onClick() {
+                                                Map<String, Object> params = new HashMap<>();
+                                                Map<String, Object> detail = new HashMap<>();
+                                                detail.put("key", o.getString("key"));
+                                                params.put("detail", detail);
+                                                mUniSDKInstance.fireGlobalEventCallback("QiyuActionListCustomActionClick", params);
+                                            }
+                                        });
+                                        break;
+                                }
+                            }
+                            return list;
+                        }
+                    };
+                } else {
+                    actionPanelOptions.actionListProvider = null;
+                }
+
+            } else {
+                inputPanelOptions.actionPanelOptions = null;
+            }
+
+            ysfOptions.inputPanelOptions = inputPanelOptions;
+        }
 
     }
+
+    /**
+     * 更改通知相关方法 （Android）
+     * @param options {}
+     */
+    public void changeNotificationOptions(JSONObject options) {
+        YSFOptions ysfOptions = QiyukfInit.getOptions();
+        StatusBarNotificationConfig statusBarNotificationConfig = ysfOptions.statusBarNotificationConfig;
+
+        if(options.containsKey("notificationColor"))
+            statusBarNotificationConfig.notificationColor = UniResourceUtils.getColor(options.getString("notificationColor"));
+        if(options.containsKey("notificationColor"))
+            statusBarNotificationConfig.notificationSound = options.getString("notificationSound");
+        if(options.containsKey("notificationSmallIconId"))
+            statusBarNotificationConfig.notificationSmallIconId = MResource.getIdByName(AppProxy.getAppContext(), "drawable", options.getString("notificationSmallIconId"));
+        if(options.containsKey("ring"))
+            statusBarNotificationConfig.ring = options.getBoolean("ring");
+        if(options.containsKey("showBadge"))
+            statusBarNotificationConfig.showBadge = options.getBoolean("showBadge");
+        if(options.containsKey("hideContent"))
+            statusBarNotificationConfig.hideContent = options.getBoolean("hideContent");
+        if(options.containsKey("downTimeToggle"))
+            statusBarNotificationConfig.downTimeToggle = options.getBoolean("downTimeToggle");
+        if(options.containsKey("titleOnlyShowAppName"))
+            statusBarNotificationConfig.titleOnlyShowAppName = options.getBoolean("titleOnlyShowAppName");
+        if(options.containsKey("downTimeEnableNotification"))
+            statusBarNotificationConfig.downTimeEnableNotification = options.getBoolean("downTimeEnableNotification");
+        if(options.containsKey("customTitleWhenTeamNameEmpty"))
+            statusBarNotificationConfig.customTitleWhenTeamNameEmpty = options.getString("customTitleWhenTeamNameEmpty");
+        if(options.containsKey("downTimeBegin"))
+            statusBarNotificationConfig.downTimeBegin = options.getString("downTimeBegin");
+        if(options.containsKey("downTimeEnd"))
+            statusBarNotificationConfig.downTimeEnd = options.getString("downTimeEnd");
+        if(options.containsKey("ledARGB"))
+            statusBarNotificationConfig.ledARGB = options.getInteger("ledARGB");
+        if(options.containsKey("ledOnMs"))
+            statusBarNotificationConfig.ledOnMs = options.getInteger("ledOnMs");
+        if(options.containsKey("ledOffMs"))
+            statusBarNotificationConfig.ledOffMs = options.getInteger("ledOffMs");
+        if(options.containsKey("notificationFoldStyle")) {
+            switch (options.getString("notificationFoldStyle")) {
+                case "ALL":
+                    statusBarNotificationConfig.notificationFoldStyle = NotificationFoldStyle.ALL;
+                    break;
+                case "CONTACT":
+                    statusBarNotificationConfig.notificationFoldStyle = NotificationFoldStyle.CONTACT;
+                    break;
+                case "EXPAND":
+                    statusBarNotificationConfig.notificationFoldStyle = NotificationFoldStyle.EXPAND;
+                    break;
+            }
+        }
+        if(options.containsKey("notificationExtraType")) {
+            switch (options.getString("notificationExtraType")) {
+                case "MESSAGE":
+                    statusBarNotificationConfig.notificationExtraType = NotificationExtraTypeEnum.MESSAGE;
+                    break;
+                case "JSON_ARR_STR":
+                    statusBarNotificationConfig.notificationExtraType = NotificationExtraTypeEnum.JSON_ARR_STR;
+                    break;
+            }
+        }
+    }
+
+
+
+
 }
