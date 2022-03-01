@@ -29,7 +29,7 @@ public class AppProxy implements UniAppHookProxy {
                 ApplicationInfo info = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
                 qiyukfQiyuID = info.metaData.getString("ImengyuQiyukf_APPID");
             } catch (PackageManager.NameNotFoundException e) {
-                UniLogUtils.e("Î´ÅäÖÃ Qiyukf_APPID £¬ÎŞ·¨Õı³£Ê¹ÓÃÆßÓã¿Í·ş¹¦ÄÜ£¡");
+                UniLogUtils.e("æœªé…ç½® Qiyukf_APPID ï¼Œæ— æ³•æ­£å¸¸ä½¿ç”¨ä¸ƒé±¼å®¢æœåŠŸèƒ½ï¼");
             }
         }
         return qiyukfQiyuID;

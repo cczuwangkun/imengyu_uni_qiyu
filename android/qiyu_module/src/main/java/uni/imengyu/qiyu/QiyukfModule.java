@@ -1194,7 +1194,7 @@ public class QiyukfModule extends WXModule {
      * @param callback
      * {
      *     type: 'EvaluationStateChange'|'EvaluationMessageClick',
-     *     state?: number,
+     *     state?: number, //0:不可评价,1:可评价,2:评价完成
      *     entry?: EvaluationOpenEntry,
      *     errMsg: string,
      *     success: boolean,
@@ -1304,7 +1304,7 @@ public class QiyukfModule extends WXModule {
      * {
      *    templateIds: number[], 工单模板 id
      *    isOpenUrge: boolean, //是否打开催单功能
-     *    exchange: string, //如果是平台版本传递 shopId，如果是非平台可以为空
+     *    shopId: string, //如果是平台版本传递 shopId，如果是非平台可以为空
      * }
      */
     @Keep
@@ -1316,8 +1316,8 @@ public class QiyukfModule extends WXModule {
             isOpenUrge = options.getBoolean("isOpenUrge");
         }
         String exchange;
-        if(options.containsKey("exchange"))
-            exchange = options.getString("exchange");
+        if(options.containsKey("shopId"))
+            exchange = options.getString("shopId");
         else
             exchange = UnicornMessageBuilder.getSessionId();
 
