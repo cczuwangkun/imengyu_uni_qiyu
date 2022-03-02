@@ -30,6 +30,7 @@ import com.qiyukf.unicorn.api.customization.action.BaseAction;
 import com.qiyukf.unicorn.api.customization.action.CameraAction;
 import com.qiyukf.unicorn.api.customization.action.ImageAction;
 import com.qiyukf.unicorn.api.customization.action.InquireWorkSheetAction;
+import com.qiyukf.unicorn.api.customization.action.WorkSheetAction;
 import com.qiyukf.unicorn.api.customization.input.ActionListProvider;
 import com.qiyukf.unicorn.api.customization.input.ActionPanelOptions;
 import com.qiyukf.unicorn.api.customization.input.InputPanelOptions;
@@ -45,6 +46,8 @@ import com.qiyukf.unicorn.api.msg.UnicornMessageBuilder;
 import com.qiyukf.unicorn.api.pop.OnSessionListChangedListener;
 import com.qiyukf.unicorn.api.pop.POPManager;
 import com.qiyukf.unicorn.api.pop.Session;
+import com.qiyukf.unicorn.api.pop.SessionListEntrance;
+import com.qiyukf.unicorn.api.pop.ShopEntrance;
 import com.qiyukf.unicorn.api.pop.ShopInfo;
 import com.taobao.weex.bridge.JSCallback;
 import com.taobao.weex.common.WXModule;
@@ -279,7 +282,6 @@ public class QiyukfModule extends WXModule {
             oo.put("attachStr", message.getAttachStr());
             callback.invoke(oo);
         } else {
-
             callback.invoke(null);
         }
     }
@@ -420,10 +422,12 @@ public class QiyukfModule extends WXModule {
     private static boolean unreadCountChangeListenerAdded = false;
     private final UnreadCountChangeListener unreadCountChangeListener = count -> {
         if(callbackJSUnreadCountChangeListeners.size() > 0) {
-            JSONObject o = new JSONObject();
-            o.put("count", count);
-            for (Map.Entry<Integer, JSCallback> entry : callbackJSUnreadCountChangeListeners.entrySet())
+            for (Map.Entry<Integer, JSCallback> entry : callbackJSUnreadCountChangeListeners.entrySet()) {
+                JSONObject o = new JSONObject();
+                o.put("count", count);
+                o.put("id", entry.getKey());
                 entry.getValue().invokeAndKeepAlive(o);
+            }
         }
     };
 
@@ -432,13 +436,17 @@ public class QiyukfModule extends WXModule {
      * @param callback
      * {
      *     id: number, //ID，可使用 POPRemoveSessionListChangedListener 删除回调监听。
-     *     type: 'AddSuccess'|'SessionUpdate'|'SessionDelete'
      * }
      */
     @Keep
     @UniJSMethod()
     public void addUnreadCountChangeListener(JSONObject options, final JSCallback callback) {
         callbackJSUnreadCountChangeListeners.put(++hashMapId, callback);
+
+        JSONObject o = new JSONObject();
+        o.put("count", 0);
+        o.put("id", hashMapId);
+        callback.invokeAndKeepAlive(o);
 
         if(!unreadCountChangeListenerAdded) {
             unreadCountChangeListenerAdded = true;
@@ -479,7 +487,7 @@ public class QiyukfModule extends WXModule {
         if(options.containsKey("show")) productDetail.setShow(options.getInteger("show"));
         if(options.containsKey("alwaysSend")) productDetail.setAlwaysSend(options.getBoolean("alwaysSend"));
         if(options.containsKey("openTemplate")) productDetail.setOpenTemplate(options.getBoolean("openTemplate"));
-        if(options.containsKey("sendByUser")) productDetail.setOpenTemplate(options.getBoolean("sendByUser"));
+        if(options.containsKey("sendByUser")) productDetail.setSendByUser(options.getBoolean("sendByUser"));
         if(options.containsKey("actionText")) productDetail.setActionText(options.getString("actionText"));
         if(options.containsKey("actionTextColor")) productDetail.setActionTextColor(UniResourceUtils.getColor(options.getString("actionTextColor")));
         if(options.containsKey("isOpenReselect")) productDetail.setIsOpenReselect(options.getBoolean("isOpenReselect"));
@@ -498,7 +506,7 @@ public class QiyukfModule extends WXModule {
                     t.setData(o.getString("data"));
                 if(o.containsKey("focusIframe"))
                     t.setFocusIframe(o.getString("focusIframe"));
-                if(o.containsKey("data"))
+                if(o.containsKey("label"))
                     t.setLabel(o.getString("label"));
                 if(o.containsKey("url"))
                     t.setUrl(o.getString("url"));
@@ -781,8 +789,29 @@ public class QiyukfModule extends WXModule {
         if(options.containsKey("staffId")) source.staffId = options.getInteger("staffId");
         if(options.containsKey("groupId")) source.groupId = options.getInteger("groupId");
         if(options.containsKey("shopId")) source.shopId = options.getString("shopId");
-        if(options.containsKey("robotId")) source.vipLevel = options.getInteger("robotId");
-        if(options.containsKey("faqGroupId")) source.vipLevel = options.getInteger("faqGroupId");
+        if(options.containsKey("robotId")) source.robotId = options.getInteger("robotId");
+        if(options.containsKey("faqGroupId")) source.faqGroupId = options.getInteger("faqGroupId");
+
+        if(options.containsKey("shopEntrance")) {
+            JSONObject oo = options.getJSONObject("shopEntrance");
+            ShopEntrance.Builder shopEntranceBuilder = new ShopEntrance.Builder();
+            if(oo.containsKey("logo")) shopEntranceBuilder.setLogo(oo.getString("logo"));
+            if(oo.containsKey("name")) shopEntranceBuilder.setLogo(oo.getString("name"));
+            source.shopEntrance = shopEntranceBuilder.build();
+        }
+        if(options.containsKey("sessionListEntrance")) {
+            JSONObject oo = options.getJSONObject("sessionListEntrance");
+
+            SessionListEntrance.Builder sessionListEntranceBuilder = new SessionListEntrance.Builder();
+            if(oo.containsKey("imageResId")) sessionListEntranceBuilder.setImageResId(
+                  MResource.getIdByName(AppProxy.getAppContext(), "drawable", oo.getString("imageResId"))
+            );
+            if(oo.containsKey("position")) sessionListEntranceBuilder.setPosition(
+                  SessionListEntrance.Position.valueOf(oo.getString("position"))
+            );
+
+            source.sessionListEntrance = sessionListEntranceBuilder.build();
+        }
 
         if(options.containsKey("quickEntryList")) {
             source.quickEntryList = new ArrayList<>();
@@ -790,7 +819,11 @@ public class QiyukfModule extends WXModule {
             JSONArray quickEntryList = options.getJSONArray("quickEntryList");
             for (int i = 0; i < quickEntryList.size(); i++) {
                 JSONObject o = quickEntryList.getJSONObject(i);
-                source.quickEntryList.add(new QuickEntry(o.getInteger("id"), o.getString("title"), o.getString("iconUrl")));
+                source.quickEntryList.add(new QuickEntry(
+                        o.getInteger("id"),
+                        o.getString("title"),
+                        o.getString("iconUrl")
+                ));
             }
         }
 
@@ -813,13 +846,13 @@ public class QiyukfModule extends WXModule {
         if(options.containsKey("custom")) source.custom = options.getString("custom");
         if(options.containsKey("VIPStaffAvatarUrl")) source.VIPStaffAvatarUrl = options.getString("VIPStaffAvatarUrl");
         if(options.containsKey("vipStaffName")) source.vipStaffName = options.getString("vipStaffName");
-        if(options.containsKey("vipStaffWelcomeMsg")) source.prompt = options.getString("vipStaffWelcomeMsg");
+        if(options.containsKey("vipStaffWelcomeMsg")) source.vipStaffWelcomeMsg = options.getString("vipStaffWelcomeMsg");
         if(options.containsKey("vipLevel")) source.vipLevel = options.getInteger("vipLevel");
         if(options.containsKey("vipStaffid")) source.vipStaffid = options.getString("vipStaffid");
 
         if(options.containsKey("robotFirst")) source.robotFirst = options.getBoolean("robotFirst");
         if(options.containsKey("robotWelcomeMsgId")) source.robotWelcomeMsgId = options.getString("robotWelcomeMsgId");
-        if(options.containsKey("leaveMsgTemplateId")) source.robotWelcomeMsgId = options.getString("leaveMsgTemplateId");
+        if(options.containsKey("leaveMsgTemplateId")) source.leaveMsgTemplateId = options.getString("leaveMsgTemplateId");
         if(options.containsKey("forbidUseCleanTopStart")) source.forbidUseCleanTopStart = options.getBoolean("forbidUseCleanTopStart");
 
         ConsultInstance instance = new ConsultInstance();
@@ -939,7 +972,7 @@ public class QiyukfModule extends WXModule {
                                 result.put("msgStatus", "draft");
                                 break;
                             case sending:
-                                result.put("msgStatus", "sending:");
+                                result.put("msgStatus", "sending");
                                 break;
                             case success:
                                 result.put("msgStatus", "success");
@@ -1102,7 +1135,7 @@ public class QiyukfModule extends WXModule {
      *    sessionId: string, - //会话 ID ，在 EvaluationOpenEntry 里面有这个值，只需要回传就可以了
      *    score: number, - //评分
      *    remark: string, - //评价内容
-     *    tagList: string, - //标签
+     *    tagList: string[], - //标签
      *    name: string, - //评价结果的文案，例如非常满意、满意、不满意等
      * }
      * @param callback
@@ -1173,7 +1206,7 @@ public class QiyukfModule extends WXModule {
                 result.put("type", "EvaluationStateChange");
                 result.put("state", i);
                 result.put("success", true);
-                callback.invoke(result);
+                callback.invokeAndKeepAlive(result);
             }
             @Override
             public void onEvaluationMessageClick(EvaluationOpenEntry evaluationOpenEntry, Context context) {
@@ -1182,7 +1215,7 @@ public class QiyukfModule extends WXModule {
                 result.put("type", "EvaluationMessageClick");
                 result.put("entry", evaluationOpenEntry);
                 result.put("success", true);
-                callback.invoke(result);
+                callback.invokeAndKeepAlive(result);
             }
         });
     }
@@ -1477,7 +1510,7 @@ public class QiyukfModule extends WXModule {
             uiCustomization.titleBarStyle = options.getInteger("titleBarStyle");
         if(options.containsKey("titleCenter"))
             uiCustomization.titleCenter = options.getBoolean("titleCenter");
-        if(options.containsKey("buttonTextColor"))
+        if(options.containsKey("buttonBackgroundColorList"))
             uiCustomization.buttonBackgroundColorList = MResource.getIdByName(AppProxy.getAppContext(),"drawable", options.getString("buttonBackgroundColorList"));
         else
             uiCustomization.buttonBackgroundColorList = 0;
@@ -1597,6 +1630,20 @@ public class QiyukfModule extends WXModule {
                                                 MResource.getIdByName(AppProxy.getAppContext(), "string", o.getString("titleId"))
                                         ));
                                         break;
+                                    case "WorkSheet": {
+                                        WorkSheetAction action = new WorkSheetAction(
+                                                MResource.getIdByName(AppProxy.getAppContext(), "drawable", o.getString("iconResId")),
+                                                MResource.getIdByName(AppProxy.getAppContext(), "string", o.getString("titleId"))
+                                        );
+
+                                        if(o.containsKey("templateId"))
+                                            action.setTemplateId(o.getLong("templateId"));
+                                        if(o.containsKey("actionFontColor"))
+                                            action.setActionFontColor(UniResourceUtils.getColor(o.getString("actionFontColor")));
+
+                                        list.add(action);
+                                        break;
+                                    }
                                     case "InquireWorkSheet": {
                                         InquireWorkSheetAction action = new InquireWorkSheetAction(
                                                 MResource.getIdByName(AppProxy.getAppContext(), "drawable", o.getString("iconResId")),

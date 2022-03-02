@@ -33,7 +33,7 @@
       "plugins": [
         {
           "type": "module",
-          "name": "imengyu-YdtNative-QiyukfModule",
+          "name": "imengyu-Qiyukf-QiyukfModule",
           "class": "QiyukfModule"
         }
       ],
