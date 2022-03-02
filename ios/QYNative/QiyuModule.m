@@ -1183,7 +1183,7 @@ UNI_EXPORT_METHOD_SYNC(@selector(resetCustomEventsHandlerToDefault:))
     };
     config.botClick = ^(NSString *target, NSString *params) {
         NSDictionary *data = [NSDictionary dictionaryWithObjects: @[
-            @"AvatarClick",
+            @"BotClick",
             target,
             params,
         ]

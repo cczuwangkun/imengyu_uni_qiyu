@@ -410,7 +410,7 @@ qiyukfModule.openService({
   });
   ```
 
-  * `checkIntentForMessage`
+  * `checkIntentForMessage(callback)`
 
     点击通知栏提醒直接跳转到会话窗口检查 (Android)。
 
@@ -423,9 +423,35 @@ qiyukfModule.openService({
     | messages | array  | 否 | 当前消息数组，消息结构与 queryLastMessage 返回的结构一致 |
     | key | string  | 否 |  |
 
-  * `resetIntent`
+  * `resetIntent()`
 
     重置检查Intent (Android)。处理后需要重置Intent数据，防止重复打开。
+
+  * `changeNotificationOptions(options)`
+
+    Android 通知栏配置。
+
+    * **options参数**
+
+      |  属性 | 类型 | 必填  | 说明  |
+      |  ----  | ----  | ----  | ----  |
+      | notificationColor | string  | 否 |  |
+      | notificationColor | string  | 否 |  |
+      | notificationSmallIconId | string  | 否 |  |
+      | ring | boolean  | 否 |  |
+      | showBadge | boolean  | 否 |  |
+      | hideContent | boolean  | 否 |  |
+      | downTimeToggle | boolean  | 否 |  |
+      | titleOnlyShowAppName | boolean  | 否 |  |
+      | downTimeEnableNotification | boolean  | 否 |  |
+      | customTitleWhenTeamNameEmpty | string  | 否 |  |
+      | downTimeBegin | string  | 否 |  |
+      | downTimeEnd | string  | 否 |  |
+      | ledARGB | number  | 否 |  |
+      | ledOnMs | number  | 否 |  |
+      | ledOffMs | number  | 否 |  |
+      | notificationFoldStyle | string  | 否 | ALL, CONTACT, EXPAND |
+      | notificationExtraType | string  | 否 | MESSAGE, JSON_ARR_STR  |
 
 * IOS通知栏新消息的点击处理可以调用 setCustomEventsHandler 设置自定义事件处理，你需要处理 NotificationClick 事件，请参考 setCustomEventsHandler 。
 
@@ -927,6 +953,70 @@ qiyukfModule.openService({
       * inputPanelOptions.actionPanelOptions类型为WorkSheet要填写工单模板ID, 参见 [高级功能 访客自助提工单](http://qiyukf.com/docs/guide/android/9-%E9%AB%98%E7%BA%A7%E5%8A%9F%E8%83%BD.html#%E8%AE%BF%E5%AE%A2%E8%87%AA%E5%8A%A9%E6%8F%90%E5%B7%A5%E5%8D%95)。
       * inputPanelOptions.actionPanelOptions类型为 InquireWorkSheet需要填写工单模板ID, 参见 [高级功能 访客自助查询工单](http://qiyukf.com/docs/guide/android/9-%E9%AB%98%E7%BA%A7%E5%8A%9F%E8%83%BD.html#%E8%AE%BF%E5%AE%A2%E8%87%AA%E5%8A%A9%E6%9F%A5%E8%AF%A2%E5%B7%A5%E5%8D%95)。
 
+    * iOS
+      * 请参考[官方文档](http://qiyukf.com/docs/guide/ios/5-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A0%B7%E5%BC%8F.html)。
+      * 图片资源必须是本地路径。
+
+      ```js
+      {
+        sessionBackground: string,
+        themeColor: string,
+        customerHeadImage: string,
+        rightItemStyleGrayOrWhite: number,
+        showCloseSessionEntry: boolean,
+        showHeadImage: boolean,
+        showTopHeadImage: boolean,
+        customerHeadImageUrl: string,
+        customerMessageBubbleNormalImage: string,
+        customerMessageBubblePressedImage: string,
+        customMessageTextColor: string,
+        customMessageHyperLinkColor: string,
+        customMessageTextFontSize: string,
+        serviceHeadImage: string,
+        serviceMessageBubbleNormalImage: string,
+        serviceMessageBubblePressedImage: string,
+        serviceMessageTextColor: string,
+        serviceMessageTextFontSize: number,
+        serviceMessageHyperLinkColor: string,
+        tipMessageTextColor: string,
+        tipMessageTextFontSize: number,
+        bypassDisplayMode: number,
+        sessionMessageSpacing: number,
+        headMessageSpacing: number,
+        messageButtonTextColor: string,
+        messageButtonBackColor: string,
+        actionButtonTextColor: string,
+        actionButtonBorderColor: string,
+        inputTextColor: string,
+        inputTextFontSize: number,
+        inputTextPlaceholder: string,
+        showAudioEntry: boolean,
+        showAudioEntryInRobotMode: boolean,
+        showEmoticonEntry: boolean,
+        showImageEntry: boolean,
+        autoShowKeyboard: boolean,
+        showShopEntrance: boolean,
+        imagePickerColor: string,
+        showSessionListEntrance: boolean,
+        bottomMargin: number,
+        sessionListEntranceImage: string,
+        sessionListEntrancePosition: number,
+        sessionTipTextColor: string,
+        sessionTipTextFontSize: number,
+        customInputItems: [
+          {
+            normalImage?: string,
+            selectedImage?: string,
+            key: string,
+            text: string,
+          }
+        ],
+      }
+      ```
+
+      * customInputItems 说明参见 [自定义样式 配置更多按钮](http://qiyukf.com/docs/guide/ios/5-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A0%B7%E5%BC%8F.html#%E9%85%8D%E7%BD%AE%E6%9B%B4%E5%A4%9A%E6%8C%89%E9%92%AE)
+      * customInputItems 的点击事件会在 QiyuCustomInputItemClick 全局事件发送。event.detail.key 是点击的条目key。
+
 * `resetUICustomizationToDefault(options)`
 
   重置界面自定义至默认。
@@ -983,6 +1073,76 @@ qiyukfModule.openService({
       * SessionListEntranceClick 最近联系商家入口点击事件
 
         无特殊参数。
+
+    * iOS
+
+      |  属性 | 类型 | 必填  | 说明  |
+      |  ----  | ----  | ----  | ----  |
+      | type | string  | 是 | 事件类型，见下方 |
+
+      * LinkClick 链接点击事件
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | linkAddress | string  | 是 | 链接 |
+
+      * BotClick 机器人部分模板消息点击事件
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | target | string  | 是 | - |
+        | params | string  | 是 | - |
+
+      * PushMessageClick 七鱼推送消息点击事件
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | linkAddress | string  | 是 | 链接 |
+
+      * ShowBotCustomInfo 机器人自定义信息回调
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | array | string  | 是 | - |
+
+      * CommodityAction 订单卡片按钮点击事件
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | commodityInfo | object  | 是 | 商品信息 |
+
+      * ExtraClick 消息扩展视图点击事件
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | extInfo | string  | 是 | extInfo |
+
+      * NotificationClick 系统消息点击
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | message | object  | 是 | 消息结构 |
+
+      * EventClick 消息内部分点击事件数据透传
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | eventName | string  | 是 |  |
+        | eventData | string  | 是 |  |
+        | messageId | string  | 是 |  |
+
+      * CustomButtonClick 自定义事件按钮点击事件
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | params | object  | 是 | 参数 |
+
+      * AvatarClick 消息头像点击事件
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | avatarType | number  | 是 | 头像类型 0人工客服 1机器人客服 2企业 3访客 |
+        | accountID | string  | 是 | 账号ID |
 
 * `resetCustomEventsHandlerToDefault(options)`
 
