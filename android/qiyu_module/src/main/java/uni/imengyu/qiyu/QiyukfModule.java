@@ -1352,6 +1352,17 @@ public class QiyukfModule extends WXModule {
     //=====================================================
 
     /**
+     * 重置界面自定义至默认
+     * @param options {}
+     */
+    @Keep
+    @UniJSMethod()
+    public void resetUICustomizationToDefault(JSONObject options) {
+        YSFOptions ysfOptions = QiyukfInit.getOptions();
+        ysfOptions.uiCustomization = new UICustomization();
+    }
+
+    /**
      * 更改界面自定义方法
      * 参考http://qiyukf.com/docs/guide/android/5-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A0%B7%E5%BC%8F.html#%E8%81%8A%E5%A4%A9%E7%AA%97%E5%8F%A3%E8%87%AA%E5%AE%9A%E4%B9%89
      * @param options {}
