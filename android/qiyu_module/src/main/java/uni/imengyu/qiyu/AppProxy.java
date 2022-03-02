@@ -27,9 +27,11 @@ public class AppProxy implements UniAppHookProxy {
         if(qiyukfQiyuID.equals("")) {
             try {
                 ApplicationInfo info = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
-                qiyukfQiyuID = info.metaData.getString("ImengyuQiyukf_APPID");
+                qiyukfQiyuID = info.metaData.getString("ImengyuQiyukf_appKey");
             } catch (PackageManager.NameNotFoundException e) {
-                UniLogUtils.e("未配置 Qiyukf_APPID ，无法正常使用七鱼客服功能！");
+                e.printStackTrace();
+                Log.e(TAG, "未配置七鱼appKey，无法正常使用七鱼客服功能！");
+                UniLogUtils.e("未配置七鱼appKey，无法正常使用七鱼客服功能！");
             }
         }
         return qiyukfQiyuID;

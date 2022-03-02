@@ -15,33 +15,45 @@
       ],
       "integrateType": "aar",
       "minSdkVersion": "21",
-			"hooksClass": "uni.imengyu.qiyu.AppProxy",
-			"dependencies": [ 
+      "hooksClass": "uni.imengyu.qiyu.AppProxy",
+      "dependencies": [
         "com.qiyukf.unicorn:unicorn:7.1.0",
         "com.squareup.okhttp3:okhttp:4.9.3",
         "com.zhy:okhttputils:2.6.2"
-			],
+      ],
       "parameters": {
-        "appid_android": {
-          "des": "七鱼SDK的appid参数",
-          "key": "ImengyuQiyukf_APPID",
-          "placeholder": "请配置七鱼APPID，否则无法正常使用客服功能"
+        "appkey_android": {
+          "des": "七鱼SDK的 appKey 参数",
+          "key": "ImengyuQiyukf_appKey",
+          "placeholder": "请配置七鱼appKey，否则无法正常使用客服功能"
         }
       }
     },
-		"ios": {
-			"plugins": [{
-				"type": "module",
-				"name": "imengyu-YdtNative-QiyukfModule",
-				"class": "QiyukfModule"
-			}],
-			"frameworks": [
-				"NIMSDK.framework",
-				"QYSDK.framework",
-				"MapKit.framework"
-			],
-			"integrateType": "framework",
-			"deploymentTarget": "9.0"
-		}
+    "ios": {
+      "plugins": [
+        {
+          "type": "module",
+          "name": "imengyu-YdtNative-QiyukfModule",
+          "class": "QiyukfModule"
+        }
+      ],
+      "frameworks": [
+        "NIMSDK.framework",
+        "QYSDK.framework",
+        "MapKit.framework"
+      ],
+      "integrateType": "framework",
+      "deploymentTarget": "9.0",
+      "parameters": {
+        "appkey_ios": {
+          "des": "七鱼SDK的 appKey 参数",
+          "key": "ImengyuQiyukf:appKey"
+        },
+        "appname_ios": {
+          "des": "传给七鱼SDK的 appName 参数",
+          "key": "ImengyuQiyukf:appName"
+        }
+      }
+    }
   }
 }

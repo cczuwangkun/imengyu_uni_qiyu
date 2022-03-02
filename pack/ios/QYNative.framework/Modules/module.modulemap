@@ -1,0 +1,6 @@
+framework module QYNative {
+  umbrella header "QYNative.h"
+
+  export *
+  module * { export * }
+}

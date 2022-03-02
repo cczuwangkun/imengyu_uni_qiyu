@@ -928,44 +928,6 @@ public class QiyukfModule extends WXModule {
                     Unicorn.openServiceActivity(AppProxy.getAppContext(), consultInstance.title, consultInstance.ConsultSource);
 
                     //创建事件
-                    QiyukfInit instance = QiyukfInit.getInstance();
-                    instance.setOnUrlClickListener(url -> {
-                        JSONObject result = new JSONObject();
-                        result.put("type", "UrlClick");
-                        result.put("url", url);
-                        result.put("success", true);
-                        eventBus.invokeAndKeepAlive(result);
-                    });
-                    instance.setOnMessageItemClickListener(url -> {
-                        JSONObject result = new JSONObject();
-                        result.put("type", "MessageItemClick");
-                        result.put("url", url);
-                        result.put("success", true);
-                        eventBus.invokeAndKeepAlive(result);
-                    });
-                    instance.setOnQuickEntryListener((shopId, quickEntry) -> {
-                        JSONObject result = new JSONObject();
-                        result.put("type", "QuickEntryClick");
-                        result.put("shopId", shopId);
-                        result.put("iconUrl", quickEntry.getIconUrl());
-                        result.put("id", quickEntry.getId());
-                        result.put("name", quickEntry.getName());
-                        result.put("success", true);
-                        eventBus.invokeAndKeepAlive(result);
-                    });
-                    instance.setOnShopEntranceClickListener((shopId) -> {
-                        JSONObject result = new JSONObject();
-                        result.put("type", "ShopEntranceClick");
-                        result.put("shopId", shopId);
-                        result.put("success", true);
-                        eventBus.invokeAndKeepAlive(result);
-                    });
-                    instance.setOnSessionListEntranceClickListener(() -> {
-                        JSONObject result = new JSONObject();
-                        result.put("type", "SessionListEntranceClick");
-                        result.put("success", true);
-                        eventBus.invokeAndKeepAlive(result);
-                    });
                     consultInstance.onSessionUpdateListener = (instance1, session) -> {
                         JSONObject result = new JSONObject();
                         result.put("type", "SessionUpdate");
@@ -1350,6 +1312,74 @@ public class QiyukfModule extends WXModule {
 
     //自定义的相关方法
     //=====================================================
+
+    /**
+     * 设置自定义事件接收
+     * @param options {}
+     * @param callback
+     * {
+     *     type: string,
+     *     ...
+     * }
+     */
+    @Keep
+    @UniJSMethod()
+    public void setCustomEventsHandler(JSONObject options, final JSCallback callback) {
+        QiyukfInit instance = QiyukfInit.getInstance();
+        instance.setOnUrlClickListener(url -> {
+            JSONObject result = new JSONObject();
+            result.put("type", "UrlClick");
+            result.put("url", url);
+            result.put("success", true);
+            callback.invokeAndKeepAlive(result);
+        });
+        instance.setOnMessageItemClickListener(url -> {
+            JSONObject result = new JSONObject();
+            result.put("type", "MessageItemClick");
+            result.put("url", url);
+            result.put("success", true);
+            callback.invokeAndKeepAlive(result);
+        });
+        instance.setOnQuickEntryListener((shopId, quickEntry) -> {
+            JSONObject result = new JSONObject();
+            result.put("type", "QuickEntryClick");
+            result.put("shopId", shopId);
+            result.put("iconUrl", quickEntry.getIconUrl());
+            result.put("id", quickEntry.getId());
+            result.put("name", quickEntry.getName());
+            result.put("success", true);
+            callback.invokeAndKeepAlive(result);
+        });
+        instance.setOnShopEntranceClickListener((shopId) -> {
+            JSONObject result = new JSONObject();
+            result.put("type", "ShopEntranceClick");
+            result.put("shopId", shopId);
+            result.put("success", true);
+            callback.invokeAndKeepAlive(result);
+        });
+        instance.setOnSessionListEntranceClickListener(() -> {
+            JSONObject result = new JSONObject();
+            result.put("type", "SessionListEntranceClick");
+            result.put("success", true);
+            callback.invokeAndKeepAlive(result);
+        });
+    }
+
+    /**
+     * 重置自定义事件接收
+     * @param options {}
+     */
+    @Keep
+    @UniJSMethod()
+    public void resetCustomEventsHandlerToDefault(JSONObject options) {
+        QiyukfInit instance = QiyukfInit.getInstance();
+        instance.setOnUrlClickListener(null);
+        instance.setOnMessageItemClickListener(null);
+        instance.setOnQuickEntryListener(null);
+        instance.setOnShopEntranceClickListener(null);
+        instance.setOnSessionListEntranceClickListener(null);
+    }
+
 
     /**
      * 重置界面自定义至默认
