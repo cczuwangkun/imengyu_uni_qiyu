@@ -1104,7 +1104,7 @@ UNI_EXPORT_METHOD(@selector(setCustomEvaluation:callback:))
         instance.controller.robotEvaluationBlock = ^(QYEvaluactionData *data) {
             NSDictionary *item = [NSDictionary dictionaryWithObjects: @[
                 @"RobotEvaluation",
-                getQYEvaluactionDataJSON(data),,
+                getQYEvaluactionDataJSON(data),
                 @"true",
                 @"ok",
             ]
