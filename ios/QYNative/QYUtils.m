@@ -311,7 +311,7 @@ extern "C"{
             case QYMessageTypeAudio: type = @"Audio"; break;
             case QYMessageTypeVideo: type = @"Video"; break;
             case QYMessageTypeFile: type = @"File"; break;
-            case QYMessageTypeCustom: type = @"ustom"; break;
+            case QYMessageTypeCustom: type = @"Custom"; break;
         }
         
         NSDictionary *item = [NSDictionary dictionaryWithObjects: @[

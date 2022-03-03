@@ -382,10 +382,11 @@ UNI_EXPORT_METHOD_SYNC(@selector(sendProductMessage:))
  */
 - (NSString *)sendProductMessage:(NSDictionary *)options {
     
-    NSString* key = [options objectForKey:@"key"];
-    if (!key)
-        return @"Param key required";
-    ConsultInstance* instance = [self.openedConsultSource objectForKey:key];
+   NSString* shopId = [options objectForKey:@"shopId"];
+    if (!shopId)
+        shopId = @"-1";
+    
+    ConsultInstance* instance = [self findConsultInstanceByShopId:shopId];
     if (!instance)
         return @"Not found ConsultInstance";
     
@@ -402,24 +403,14 @@ UNI_EXPORT_METHOD_SYNC(@selector(sendMessage:))
 
 /**
  * 发送消息
- * @param options
- * {
- *      type: 'text'|'image'|'video'|'file',
- *      filePath: string, //要发送的图片或者视频文件路径
- *      displayName: string, //要发送的图片或者视频显示名称
- *      width?: number, //发送视频时的视频宽度
- *      height?: number, //发送视频时的视频高度
- *      duration?: number, //发送视频时的视频时长，ms
- *      local?: boolean, //是否发送至本地
- *      isNotify?: boolean, //发送至本地时是否通知
- *      isSaveDB?: boolean, //发送至本地时是否保存至数据库
- * }
+ * @param options {}
  */
 - (NSString *)sendMessage:(NSDictionary *)options {
-    NSString* key = [options objectForKey:@"key"];
-    if (!key)
-        return @"Param key required";
-    ConsultInstance* instance = [self.openedConsultSource objectForKey:key];
+    NSString* shopId = [options objectForKey:@"shopId"];
+    if (!shopId)
+        shopId = @"-1";
+    
+    ConsultInstance* instance = [self findConsultInstanceByShopId:shopId];
     if (!instance)
         return @"Not found ConsultInstance";
     
@@ -440,7 +431,6 @@ UNI_EXPORT_METHOD_SYNC(@selector(sendMessage:))
                [[options objectForKey:@"filePath"] stringValue]]];
         }
         
-        //TODO:!!!
         return @"success";
     }
     
@@ -1098,12 +1088,12 @@ UNI_EXPORT_METHOD(@selector(setCustomEvaluation:callback:))
         instance.controller.evaluationBlock = ^(QYEvaluactionData *data) {
             NSDictionary *item = [NSDictionary dictionaryWithObjects: @[
                 @"Evaluation",
-                @"data",
+                getQYEvaluactionDataJSON(data),
                 @"true",
                 @"ok",
             ]
                                                              forKeys: @[
-                getQYEvaluactionDataJSON(data),
+                @"type",
                 @"data",
                 @"success",
                 @"errMsg",
@@ -1114,12 +1104,12 @@ UNI_EXPORT_METHOD(@selector(setCustomEvaluation:callback:))
         instance.controller.robotEvaluationBlock = ^(QYEvaluactionData *data) {
             NSDictionary *item = [NSDictionary dictionaryWithObjects: @[
                 @"RobotEvaluation",
-                @"data",
+                getQYEvaluactionDataJSON(data),,
                 @"true",
                 @"ok",
             ]
                                                              forKeys: @[
-                getQYEvaluactionDataJSON(data),
+                @"type",
                 @"data",
                 @"success",
                 @"errMsg",

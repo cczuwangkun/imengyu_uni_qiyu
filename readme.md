@@ -49,10 +49,6 @@ qiyukfModule.openService({
 
   上报用户信息。
 
-  * 调用的API官方文档：
-    * [Android CRM对接 > 上报用户信息](http://qiyukf.com/docs/guide/android/3-CRM%E5%AF%B9%E6%8E%A5.html)。
-    * [iOS CRM对接 > 上报用户信息](http://qiyukf.com/docs/guide/ios/3-CRM%E5%AF%B9%E6%8E%A5.html#%E4%B8%8A%E6%8A%A5%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF)。
-
   * **data 参数**
 
     |  属性 | 类型 | 必填  | 说明  |
@@ -72,10 +68,6 @@ qiyukfModule.openService({
 * `clearUserInfo()`
 
   注销用户.
-
-  * 调用的API官方文档：
-    * [Android CRM对接 > 注销用户](http://qiyukf.com/docs/guide/android/3-CRM%E5%AF%B9%E6%8E%A5.html#%E6%B3%A8%E9%94%80%E7%94%A8%E6%88%B7)。
-    * [iOS CRM对接 > 注销用户](http://qiyukf.com/docs/guide/ios/3-CRM%E5%AF%B9%E6%8E%A5.html#%E6%B3%A8%E9%94%80%E7%94%A8%E6%88%B7)。
 
 #### SDK 方法
 
@@ -99,9 +91,6 @@ qiyukfModule.openService({
 
   默认情况下，只有访客在聊天界面时，才不会有通知栏提醒，其他界面以及 App 在后台时，都会有消息提醒。如果当 App 在前台时，不需要通知栏提醒新消息，可以调用toggleNotification关闭消息提醒，然后在 App 退到后台时，调用toggleNotification重新打开。
 
-  * 调用的API官方文档：
-    * [Android 消息推送 > 新消息提醒](http://qiyukf.com/docs/guide/android/4-%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81.html#%E6%96%B0%E6%B6%88%E6%81%AF%E6%8F%90%E9%86%92)。
-
   * **options 参数**
 
     |  属性 | 类型 | 必填  | 说明  |
@@ -111,11 +100,6 @@ qiyukfModule.openService({
 * `clearCache()`
 
   通知栏消息提醒开关控制。
-
-  * 调用的API官方文档：
-    * [Android 其他 > 清除缓存文件](http://qiyukf.com/docs/guide/android/10-%E5%85%B6%E4%BB%96.html#%E6%B8%85%E9%99%A4%E7%BC%93%E5%AD%98%E6%96%87%E4%BB%B6)。
-  * 调用的API官方文档：
-    * [Android 其他 > 清理文件缓存](http://qiyukf.com/docs/guide/ios/11-%E5%85%B6%E4%BB%96.html#%E6%B8%85%E7%90%86%E6%96%87%E4%BB%B6%E7%BC%93%E5%AD%98)。
 
 ### 打开客服窗口
 
@@ -252,11 +236,134 @@ qiyukfModule.openService({
 
       |  属性 | 类型 | 必填  | 说明  |
       |  ----  | ----  | ----  | ----  |
-      | on | boolean  | 否 | 用户唯一性标识 |
-      | on | boolean  | 否 | 用户唯一性标识 |
-      | on | boolean  | 否 | 用户唯一性标识 |
-      | on | boolean  | 否 | 用户唯一性标识 |
-      | on | boolean  | 否 | 用户唯一性标识 |
+      | sourceTitle | string  | 否 | 来源标题 title可对应管理后台“App核心页面列表”中“页面名称”（v5.10.0） |
+      | sourceUrl | string  | 否 | 来源链接 urlString可对应管理后台“App核心页面列表”中“页面链接”（v5.10.0） 此处不做链接相关校验，可传任意字符串 |
+      | custom | string  | 否 | 来源自定义信息 |
+      | shopId | string  | 否 | 如果是平台企业，可以填写目标商家ID，非平台不需要此字段 |
+      | groupId | number  | 否 | 访客分流 分组Id |
+      | staffId | number  | 否 | 访客分流 客服Id |
+      | robotId | number  | 否 | 机器人Id |
+      | vipLevel | number  | 否 | vip等级 |
+      | commonQuestionTemplateId | number  | 否 | 常见问题 模板Id |
+      | robotWelcomeTemplateId | number  | 否 | 机器人欢迎语 模板Id |
+      | shuntTemplateId | number  | 否 | 多入口分流 模板Id |
+      | title | string  | 否 | 会话窗口标题 |
+      | openRobotInShuntMode | boolean  | 否 | 访客分流 是否开启机器人 仅设置staffId/groupId时生效 |
+      | commodityInfo | QYCommodityInfo | 否 | 商品信息展示 |
+      | canCopyCommodityInfo | boolean  | 否 | 商品消息是否支持长按复制urlString信息，默认为true |
+      | staffInfo | QYStaffInfo | 否 | 人工客服信息 |
+      | quickEntryList | `Array<QYButtonInfo>` | 否 | 输入区域上方工具栏内的按钮信息 |
+      | autoSendInRobot | boolean  | 否 | 机器人自动发送商品信息功能 |
+      | messagePageLimit | number  | 否 | 每页消息加载的最大数量，默认为20条 |
+      | hideHistoryMessages | boolean  | 否 | 是否收起历史消息，默认为false；若设置为true，进入会话界面时若需创建新会话，则收起历史消息 |
+      | historyMessagesTip | string  | 否 | 历史消息提示文案，默认为“——以上为历史消息——”；仅在hideHistoryMessages为true，首次下拉历史消息时展示 |
+
+      * QYCommodityInfo 商品信息结构
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | pictureUrlString | string  | 否 | 商品图片链接，字符数要求小于1000 |
+        | title | string  | 否 | 商品标题，字符数要求小于100 |
+        | desc | string  | 否 | 商品描述，字符数要求小于300 |
+        | note | string  | 否 | 备注信息，可以显示价格，订单号等，字符数要求小于100 |
+        | urlString | string  | 否 | 跳转url，字符数要求小于1000 |
+        | tagsArray | QYCommodityTag[]  | 否 | 标签数据，数组类型 |
+        | tagsString | string  | 否 | 标签数据，字符串类型，与数组类型二选一 |
+        | show | boolean  | 否 | 发送时是否在访客端隐藏，默认隐藏 |
+        | isPictureLink | boolean  | 否 | 是否仅显示商品图片，默认否 |
+        | sendByUser | boolean  | 否 | 是否由访客主动发送，默认否；设置为true，消息下方新增发送按钮 (v4.4.0) |
+        | actionText | string  | 否 | 发送按钮文案 |
+        | actionTextColor | string  | 否 | 发送按钮文案颜色  |
+        | ext | string | 否 | 一般用户不需要填这个字段，这个字段仅供特定用户使 |
+
+        * QYCommodityTag 结构
+
+          |  属性 | 类型 | 必填  | 说明  |
+          |  ----  | ----  | ----  | ----  |
+          | label | string  | 否 | 标签标题 |
+          | url | string  | 否 | 跳转URL |
+          | focusIframe | string  | 否 |  |
+          | data | string  | 否 |  |
+
+      * QYButtonInfo 结构
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | title | string  | 是 | 标题 |
+        | id | number  | 是 | 按钮ID |
+
+      * QYStaffInfo 人工客服信息结构
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | staffId | string  | 否 | 客服ID，限制20字符 |
+        | nickName | string  | 否 | 客服昵称，限制20字符 |
+        | iconURL | string  | 否 | 客服头像URL |
+        | accessTip | string  | 否 | 接入提示，限制50字符 |
+        | infoDesc | string  | 否 | 客服信息描述 |
+
+    * **eventBus 返回**
+
+      |  属性 | 类型 | 必填  | 说明  |
+      |  ----  | ----  | ----  | ----  |
+      | type | `string` | 是 | 事件类型，见下方  |
+      | ... |  | 否 | 不同事件类型有不同参数，见下方 |
+
+      * OpenServiceResult ：调用 openService 返回的结果
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | success | boolean  | 是 | 表示是否成功 |
+        | errMsg | string  | 否 | 错误信息 |
+
+      * SessionUpdate ：当前会话更新时发生回调，例如添加、删除、新消息等
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | success | boolean  | 是 | 表示是否成功 |
+        | shopId | string  | 是 | 当前会话的商家ID |
+        | content | string  | 是 | 当前会话的最新一条消息内容 |
+        | time | string  | 是 | 当前会话的最新一条消息的时间戳 |
+        | unreadCount | string  | 是 | 当前会话的商家的未读消息条数 |
+
+      * SessionDelete ：当前会话结束删除时发生
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | success | boolean  | 是 | 表示是否成功 |
+        | shopId | string  | 是 | 当前会话的商家ID |
+
+      * ReceiveMessage ：当前会话有新消息时发生
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | message | QYMessage | 是 | 新消息 |
+
+      * ShopEntranceClick ：点击右上角按钮回调（对于平台电商来说，这里可以考虑放“商铺入口”）
+
+        无特殊参数。
+
+      * SessionListEntranceClick ：点击聊天内容区域的按钮回调（对于平台电商来说，这里可以考虑放置“会话列表入口“）
+
+        无特殊参数。
+
+      * QuickEntryClick ： 工具栏内按钮点击回调定义
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | title | string | 是 | 按钮标题 |
+        | id | string | 是 | 按钮ID |
+        | actionType | number | 是 | actionType为1表示发送文本消息title，2表示openURL或是自定义行为 |
+        | index | number | 是 | index表示该button位置 |
+
+    * QYMessage 结构
+
+      |  属性 | 类型 | 必填  | 说明  |
+      |  ----  | ----  | ----  | ----  |
+      | type | string | 是 | 消息类型 None未知，Text文字，Image图片，Audio音频，Video视频，File文件， Custom自定义 |
+      | text | string | 是 | 消息文本内容 |
+      | content | string | 是 | 消息文本内容，同text |
+      | time | number | 是 | 消息时间戳 |
 
 * `closeService(options, callback)`
 
@@ -284,7 +391,8 @@ qiyukfModule.openService({
     |  属性 | 类型 | 必填  | 说明  |
     |  ----  | ----  | ----  | ----  |
     | shopId | string  | 否 | 如果是平台企业，可以填写目标发送商家ID，非平台不需要此字段 |
-    | ... |   | 是 | 商品结构请参考 `openService` 的 ProductDetail 结构 |
+    | ... |   | 是 | Android 商品结构请参考 `openService` 的 ProductDetail 结构 |
+    | ... |   | 是 | iOS 商品结构请参考 `openService` 的 QYCommodityInfo 结构 |
 
 * `sendMessage(options)`
 
@@ -302,6 +410,7 @@ qiyukfModule.openService({
       |  属性 | 类型 | 必填  | 说明  |
       |  ----  | ----  | ----  | ----  |
       | filePath | string  | 是 | 文件路径，请转为绝对路径 |
+      | displayName | string  | 否 | 显示名称 IOS 需要传 |
 
     * text 发送文字消息
 
@@ -314,17 +423,17 @@ qiyukfModule.openService({
       |  属性 | 类型 | 必填  | 说明  |
       |  ----  | ----  | ----  | ----  |
       | filePath | string  | 是 | 文件路径，请转为绝对路径 |
-      | displayName | string  | 是 | 视频显示名称 |
-      | width | number  | 是 | 视频显示宽度 |
-      | height | number  | 是 | 视频显示高度 |
-      | duration | number  | 是 | 视频时长 |
+      | displayName | string  | 否 | 视频显示名称, IOS 不用传 |
+      | width | number  | 否 | 视频显示宽度, IOS 不用传 |
+      | height | number  | 否 | 视频显示高度, IOS 不用传 |
+      | duration | number  | 否 | 视频时长, IOS 不用传 |
 
     * image 发送图片消息
 
       |  属性 | 类型 | 必填  | 说明  |
       |  ----  | ----  | ----  | ----  |
       | filePath | string  | 是 | 文件路径，请转为绝对路径 |
-      | displayName | string  | 是 | 图片显示名称 |
+      | displayName | string  | 否 | 图片显示名称, IOS 不用传 |
 
 ### 新消息提醒与未读数
 
@@ -393,7 +502,7 @@ qiyukfModule.openService({
 
 关于通知栏新消息的点击处理
 
-* Android通知栏新消息的点击处理，参见[官方文档](http://qiyukf.com/docs/guide/android/4-%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81.html#%E6%96%B0%E6%B6%88%E6%81%AF%E6%8F%90%E9%86%92)。
+* **Android通知栏新消息**的点击处理，参见[官方文档](http://qiyukf.com/docs/guide/android/4-%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81.html#%E6%96%B0%E6%B6%88%E6%81%AF%E6%8F%90%E9%86%92)。
 
   插件封装了官方文档中提供的方法，你可以在 App.vue OnShow 中调用以下方法：
 
@@ -435,31 +544,31 @@ qiyukfModule.openService({
 
       |  属性 | 类型 | 必填  | 说明  |
       |  ----  | ----  | ----  | ----  |
-      | notificationColor | string  | 否 |  |
-      | notificationColor | string  | 否 |  |
-      | notificationSmallIconId | string  | 否 |  |
-      | ring | boolean  | 否 |  |
-      | showBadge | boolean  | 否 |  |
-      | hideContent | boolean  | 否 |  |
+      | notificationColor | string  | 否 | 通知颜色 |
+      | notificationSound | string  | 否 | 通知声音文件路径 |
+      | notificationSmallIconId | string  | 否 | 通知小图标的resId |
+      | ring | boolean  | 否 | 是否播放铃声 |
+      | showBadge | boolean  | 否 | 是否显示徽章 |
+      | hideContent | boolean  | 否 | 是否隐藏消息内容 |
       | downTimeToggle | boolean  | 否 |  |
-      | titleOnlyShowAppName | boolean  | 否 |  |
+      | titleOnlyShowAppName | boolean  | 否 | 标题是否只显示应用名称 |
       | downTimeEnableNotification | boolean  | 否 |  |
       | customTitleWhenTeamNameEmpty | string  | 否 |  |
       | downTimeBegin | string  | 否 |  |
       | downTimeEnd | string  | 否 |  |
-      | ledARGB | number  | 否 |  |
-      | ledOnMs | number  | 否 |  |
-      | ledOffMs | number  | 否 |  |
+      | ledARGB | number  | 否 | 呼吸灯的ARGB数值 |
+      | ledOnMs | number  | 否 | 呼吸灯亮时间 |
+      | ledOffMs | number  | 否 | 呼吸灯灭时间 |
       | notificationFoldStyle | string  | 否 | ALL, CONTACT, EXPAND |
       | notificationExtraType | string  | 否 | MESSAGE, JSON_ARR_STR  |
 
-* IOS通知栏新消息的点击处理可以调用 setCustomEventsHandler 设置自定义事件处理，你需要处理 NotificationClick 事件，请参考 setCustomEventsHandler 。
+* **IOS通知栏新消息**的点击处理可以调用 setCustomEventsHandler 设置自定义事件处理，你需要处理 NotificationClick 事件，请参考 setCustomEventsHandler 。
 
 #### 获取最后一条消息
 
-* `queryLastMessage(options, callback)`
+* `queryLastMessage(options, callback)` (Android)
 
-  获取和客服的最后一条聊天消息内容。(Android)
+  获取和客服的最后一条聊天消息内容。
 
   * **options 参数**
 
@@ -477,7 +586,7 @@ qiyukfModule.openService({
 
 ### 评价
 
-* `openEvaluation(options, callback)`
+* `openEvaluation(options, callback)` (Android)
 
   打开评价界面，如果自定义了评价界面会跳转自定义的评价界面，如果没有自定义，则进行七鱼评价界面的流程.
 
@@ -500,58 +609,172 @@ qiyukfModule.openService({
 
   * **options 参数**
 
-    无参数
+    * Android
+
+      无参数
+
+    * iOS
+
+      |  属性 | 类型 | 必填  | 说明  |
+      |  ----  | ----  | ----  | ----  |
+      | shopId | string  | 否 | 平台版是你需要请求的商家ID，普通版可以为空 |
 
   * **callback 回调参数**
 
-    |  属性 | 类型 | 必填  | 说明  |
-    |  ----  | ----  | ----  | ----  |
-    | type | string | 是 | 事件类型，有不同的参数，见下 |
-    | success | boolean  | 是 | 表示是否成功 |
-    | errMsg | string  | 是 | 错误信息 |
-
-    * EvaluationStateChange 评价状态更改事件
+    * Android
 
       |  属性 | 类型 | 必填  | 说明  |
       |  ----  | ----  | ----  | ----  |
-      | state | number  | 是 | 评价状态 0:不可评价,1:可评价,2:评价完成 |
+      | type | string | 是 | 事件类型，有不同的参数，见下 |
+      | success | boolean  | 是 | 表示是否成功 |
+      | errMsg | string  | 是 | 错误信息 |
 
-    * EvaluationMessageClick 邀评消息被点击，App 方可以在此方法启动自己的评价界面
-
-      |  属性 | 类型 | 必填  | 说明  |
-      |  ----  | ----  | ----  | ----  |
-      | entry | EvaluationOpenEntry  | 否 | 评价配置数据 |
-
-      * EvaluationOpenEntry 结构
+      * EvaluationStateChange 评价状态更改事件
 
         |  属性 | 类型 | 必填  | 说明  |
         |  ----  | ----  | ----  | ----  |
-        | evaluatorScenes | number  | 否 | 评价配置数据 |
-        | lastSource | number  | 否 | 评价配置数据 |
-        | lastRemark | String  | 否 | 评价配置数据 |
-        | exchange | String  | 否 | 评价配置数据 |
-        | sessionId | number  | 否 | 评价配置数据 |
-        | title | String  | 否 | 评价配置数据 |
-        | type | number  | 否 | 评价配置数据 |
-        | resolvedEnabled | number  | 否 | 评价配置数据 |
-        | resolvedRequired | number  | 否 | 评价配置数据 |
-        | evaluationEntryList | `Array<EvaluationOptionEntry>` | 否 | 评价配置数据 |
+        | state | number  | 是 | 评价状态 0:不可评价,1:可评价,2:评价完成 |
 
-        * EvaluationOptionEntry 结构
+      * EvaluationMessageClick 邀评消息被点击，App 方可以在此方法启动自己的评价界面
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | entry | EvaluationOpenEntry  | 否 | 评价配置数据 |
+
+        * EvaluationOpenEntry 结构
 
           |  属性 | 类型 | 必填  | 说明  |
           |  ----  | ----  | ----  | ----  |
-          | commentRequired | boolean  | 否 | 评价配置数据 |
-          | name | string  | 否 | 评价配置数据 |
-          | tagList | string[]  | 否 | 评价配置数据 |
-          | tagRequired | boolean  | 否 | 评价配置数据 |
-          | value | number  | 否 | 评价配置数据 |
+          | evaluatorScenes | number  | 否 | 评价配置数据 |
+          | lastSource | number  | 否 | 评价配置数据 |
+          | lastRemark | String  | 否 | 评价配置数据 |
+          | exchange | String  | 否 | 评价配置数据 |
+          | sessionId | number  | 否 | 评价配置数据 |
+          | title | String  | 否 | 评价配置数据 |
+          | type | number  | 否 | 评价配置数据 |
+          | resolvedEnabled | number  | 否 | 评价配置数据 |
+          | resolvedRequired | number  | 否 | 评价配置数据 |
+          | evaluationEntryList | `Array<EvaluationOptionEntry>` | 否 | 评价配置数据 |
+
+          * EvaluationOptionEntry 结构
+
+            |  属性 | 类型 | 必填  | 说明  |
+            |  ----  | ----  | ----  | ----  |
+            | commentRequired | boolean  | 否 | 评价配置数据 |
+            | name | string  | 否 | 评价配置数据 |
+            | tagList | string[]  | 否 | 评价配置数据 |
+            | tagRequired | boolean  | 否 | 评价配置数据 |
+            | value | number  | 否 | 评价配置数据 |
+
+    * iOS
+
+      |  属性 | 类型 | 必填  | 说明  |
+      |  ----  | ----  | ----  | ----  |
+      | type | string | 是 | 事件类型，有不同的参数，见下 |
+      | success | boolean  | 是 | 表示是否成功 |
+      | errMsg | string  | 是 | 错误信息 |
+
+      * RobotEvaluation 机器人满意度评价事件
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | data | QYEvaluactionData | 是 | 评价数据，包括评价模式、选项及标签、上次评价结果等数据，据此构建评价界面 |
+
+      * Evaluation 人工满意度评价事件
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | data | QYEvaluactionData | 是 | 评价数据，包括评价模式、选项及标签、上次评价结果等数据，据此构建评价界面 |
+
+      * QYEvaluactionData 结构
+
+        |  属性 | 类型 | 必填  | 说明  |
+        |  ----  | ----  | ----  | ----  |
+        | urlString | string | 是 | 评价页面URL，对应“管理后台-评价样式-新页面”填写的字符串 |
+        | sessionId | number | 是 | 评价会话ID，提交评价结果时需透传 |
+        | optionList | `Arrray<QYEvaluationOptionData>` | 是 | 选项数据 |
+        | mode | string | 是 | 评价模式 |
+        | resolvedEnabled | boolean | 是 | 是否向访客收集“您的问题是否解决” |
+        | resolvedRequired | boolean | 是 | “您的问题是否解决”是否必填 |
+
+        * QYEvaluactionData.mode 枚举
+          * QYEvaluationModeTwoLevel 模式一（二级满意度）：满意/不满意
+          * QYEvaluationModeThreeLevel 模式二（三级满意度）：满意/一般/不满意
+          * QYEvaluationModeFourLevel 模式三（四级满意度）：非常满意/满意/不满意/非常不满意
+          * QYEvaluationModeFiveLevel 模式四（五级满意度）：非常满意/满意/一般/不满意/非常不满意
+
+        * QYEvaluationOptionData 结构
+
+          |  属性 | 类型 | 必填  | 说明  |
+          |  ----  | ----  | ----  | ----  |
+          | option | string | 是 | 选项类型 |
+          | name | string | 是 | 选项名称 |
+          | score | number | 是 | 选项分值 |
+          | tagList | string[] | 是 | 标签 |
+          | tagRequired | string | 是 | 标签是否必填 |
+          | remarkRequired | string | 是 | 备注是否必填 |
+
+          * QYEvaluationOptionData.option 枚举
+            * QYEvaluationOptionVerySatisfied 非常满意
+            * QYEvaluationOptionSatisfied  满意
+            * QYEvaluationOptionOrdinary 一般
+            * QYEvaluationOptionDissatisfied /不满意
+            * QYEvaluationOptionVeryDissatisfied 非常不满意
 
 * `deleteCustomEvaluation()`
 
   删除 setCustomEvaluation 设置的评价接口
 
-* `doCustomEvaluation(options, callback)`
+* `sendEvaluationResult(options, callback)` (iOS)
+
+  发送人工满意度评价结果.
+
+  * **options 参数**
+
+    |  属性 | 类型 | 必填  | 说明  |
+    |  ----  | ----  | ----  | ----  |
+    | shopId | string  | 否 | 平台版是你需要请求的商家ID，普通版可以为空 |
+
+    * QYEvaluactionResult
+
+    |  属性 | 类型 | 必填  | 说明  |
+    |  ----  | ----  | ----  | ----  |
+    | sessionId | number  | 是 | 评价会话ID，不可为空 |
+    | mode | string  | 是 | 评价模式，透传 QYEvaluactionData.mode（提交机器人评价结果时此项必须） |
+    | selectOption | QYEvaluationOptionData | 是 | 选中的选项，不可为空 (结构参见setCustomEvaluation) |
+    | selectTags | string[]  | 是 | 选中的标签，若selectOption的tagRequired必填，则selectTags不可为空 |
+    | remarkString | string  | 是 | 评价备注，若selectOption的remarkRequired必填，则remarkString不可为空 |
+    | resolveStatus | string  | 是 | QYEvaluationResolveStatus 是否解决，若resolvedRequired必填，则resolveStatus不可为None |
+
+    * QYEvaluationResolveStatus 枚举
+      * QYEvaluationResolveStatusResolved 已解决
+      * QYEvaluationResolveStatusUnsolved 未解决
+
+  * **callback 回调参数**
+
+    |  属性 | 类型 | 必填  | 说明  |
+    |  ----  | ----  | ----  | ----  |
+    | state | string  | 否 | 评价结果状态 QYEvaluationState  |
+    | result | number  | 否 | 评价结果状态码 |
+    | success | boolean  | 是 | 表示是否成功 |
+    | errMsg | string  | 是 | 错误信息 |
+
+    * QYEvaluationState 枚举
+      * QYEvaluationStateSuccessFirst = 1 成功-首次评价
+      * QYEvaluationStateSuccessRevise 成功-修改评价
+      * QYEvaluationStateFailParamError 失败-发送参数错误
+      * QYEvaluationStateFailNetError 失败-网络错误
+      * QYEvaluationStateFailNetTimeout 失败-网络超时
+      * QYEvaluationStateFailTimeout 失败-评价超时
+      * QYEvaluationStateFailUnknown 失败-未知原因不可评价
+
+* `sendRobotEvaluationResult(options, callback)` (iOS)
+
+  发送机器人满意度评价结果。
+
+  参数，回调 与 `sendEvaluationResult` 基本相同。
+
+* `doCustomEvaluation(options, callback)` (Android)
 
   自定义评价界面进行评价。
 
@@ -574,7 +797,7 @@ qiyukfModule.openService({
     | success | boolean  | 是 | 表示是否成功 |
     | errMsg | string  | 是 | 错误信息 |
 
-* `POPOpenEvaluation(options, callback)`
+* `POPOpenEvaluation(options, callback)` (Android)
 
   平台版打开七鱼SDK评价。
 
@@ -590,7 +813,7 @@ qiyukfModule.openService({
 
 ### 人工客服
 
-* `requestStaff(options)`
+* `requestStaff(options)` (Android)
 
   普通版请求人工客服。
 
@@ -600,7 +823,21 @@ qiyukfModule.openService({
     |  ----  | ----  | ----  | ----  |
     | hunmanOnly | boolean  | 否 | 是否只请求人工客服，true 则只请求人工客服 false 则为人工客服和机器人都可以 return 请求是否成功，有可能你当前的状态不需要请求客服，也有可能你已经在人工的状态了，那么也会返回 true |
 
-* `requestStaff2(options)`
+* `requestStaff(options)`（iOS）
+
+  请求人工客服。
+
+  * **options 参数**
+
+    |  属性 | 类型 | 必填  | 说明  |
+    |  ----  | ----  | ----  | ----  |
+    | shopId | string  | 否 | 平台版是你需要请求的商家ID，普通版可以为空 |
+
+  * **返回参数**
+
+    类型 string。
+
+* `requestStaff2(options)` (Android)
 
   请求人工客服。
 
@@ -614,7 +851,28 @@ qiyukfModule.openService({
     | staffId | number  | 是 | staffId |
     | groupId | number  | 是 | groupId |
 
-* `transferStaff(options)`
+* `changeHumanStaffWithStaffId(options, callback)`（iOS）
+
+  切换人工客服。
+
+  * **options 参数**
+
+    |  属性 | 类型 | 必填  | 说明  |
+    |  ----  | ----  | ----  | ----  |
+    | shopId | string  | 否 | 平台版是你需要请求的商家ID，普通版可以为空 |
+    | closetip | string  | 是 | 关闭客服的提示语 |
+    | isHuman | boolean  | 是 | 转接客服是否只请求人工 |
+    | staffId | number  | 是 | 想要转接的客服 id |
+    | groupId | number  | 是 | 想要转接的分组 id 如果同时设置 staffId 和 groupId 那么以 staffId 为主 |
+
+  * **callback 回调参数**
+
+    |  属性 | 类型 | 必填  | 说明  |
+    |  ----  | ----  | ----  | ----  |
+    | success | boolean  | 是 | 表示是否成功 |
+    | errMsg | string  | 是 | 错误信息 |
+
+* `transferStaff(options)` (Android)
 
   转接客服的接口，在必要的时候可以通过此方法进行客服的转接 方法内部实现是，现结束当前客服的会话，然后在重新连接一下客服。
 
@@ -628,7 +886,7 @@ qiyukfModule.openService({
     | staffId | number  | 是 | staffId |
     | groupId | number  | 是 | groupId |
 
-* `quitQueue(options)`
+* `quitQueue(options)` (Android)
 
   退出排队的方法。
 
@@ -741,7 +999,7 @@ qiyukfModule.openService({
     |  ----  | ----  | ----  | ----  |
     | list | array  | 是 | 会话列表， 条目结构见下方 |
 
-    * 会话列表条目结构
+    * 会话列表条目结构 (Android)
 
       |  属性 | 类型 | 必填  | 说明  |
       |  ----  | ----  | ----  | ----  |
@@ -751,64 +1009,19 @@ qiyukfModule.openService({
       | content | string | 是 | 最后一条消息内容 |
       | time | number | 是 | 最后一条消息的时间戳 |
 
-* `POPQueryLastMessage(options, callback)`
+    * 会话列表条目结构 (iOS)
 
-  平台版获取和客服的最后一条聊天消息内容。(Android)。
-
-  * **options 参数**
-
-    |  属性 | 类型 | 必填  | 说明  |
-    |  ----  | ----  | ----  | ----  |
-    | shopId | string  | 是 | 商家ID |
-
-  * **callback 回调参数**
-
-    返回消息结构与 queryLastMessage 返回的结构一致。
-
-* `POPGetShopInfo(options, callback)`
-
-  平台版根据商家ID获取商家信息，如名称，logo (Android)。
-
-  * **options 参数**
-
-    |  属性 | 类型 | 必填  | 说明  |
-    |  ----  | ----  | ----  | ----  |
-    | shopId | string  | 是 | 商家ID |
-
-  * **callback 回调参数**
-
-    |  属性 | 类型 | 必填  | 说明  |
-    |  ----  | ----  | ----  | ----  |
-    | account | string  | 是 | 账号 |
-    | avatar | string  | 是 | 商家头像URL |
-    | name | string  | 是 | 商家名称 |
-
-* `POPQuerySessionStatus(options, callback)`
-
-  平台版获取会话状态 (Android)。
-
-  * **options 参数**
-
-    |  属性 | 类型 | 必填  | 说明  |
-    |  ----  | ----  | ----  | ----  |
-    | shopId | string  | 是 | 商家ID |
-
-  * **callback 回调参数**
-
-    |  属性 | 类型 | 必填  | 说明  |
-    |  ----  | ----  | ----  | ----  |
-    | status | string  | 是 | NONE 未知，IN_SESSION 正在聊天，IN_QUEUE 正在排队 |
-
-* `POPDeleteSession(options)`
-
-  删除最近联系商家记录 (Android)。
-
-  * **options 参数**
-
-    |  属性 | 类型 | 必填  | 说明  |
-    |  ----  | ----  | ----  | ----  |
-    | shopId | string  | 是 | 商家ID |
-    | clearMsgHistory | boolean  | 是 | 是否同时清空消息记录 |
+      |  属性 | 类型 | 必填  | 说明  |
+      |  ----  | ----  | ----  | ----  |
+      | contactId | string | 是 | 联系ID |
+      | status | number | 是 | 消息状态 -1 draft, 0 sending, 1 success, 2 fail, 3 read, 4 unread |
+      | unreadCount | number | 是 | 未读数 |
+      | hasTrashWords | boolean | 是 | 是否有垃圾敏感词汇 |
+      | content | string | 是 | 最后一条消息内容 |
+      | lastMessageText | string | 是 | 最后一条消息内容 |
+      | sessionName | string | 是 | 聊天会话名称 |
+      | avatarImageUrlString | string | 是 | 聊天头像路径 |
+      | time | number | 是 | 最后一条消息的时间戳 |
 
 * `POPAddSessionListChangedListener(options, callback)`
 
@@ -848,6 +1061,76 @@ qiyukfModule.openService({
     |  ----  | ----  | ----  | ----  |
     | id | number  | 是 | POPAddSessionListChangedListener返回的ID |
 
+* `POPQueryLastMessage(options, callback)`(Android)
+
+  平台版获取和客服的最后一条聊天消息内容。。
+
+  * **options 参数**
+
+    |  属性 | 类型 | 必填  | 说明  |
+    |  ----  | ----  | ----  | ----  |
+    | shopId | string  | 是 | 商家ID |
+
+  * **callback 回调参数**
+
+    返回消息结构与 queryLastMessage 返回的结构一致。
+
+* `POPGetShopInfo(options, callback)` (Android)
+
+  平台版根据商家ID获取商家信息，如名称，logo。
+
+  * **options 参数**
+
+    |  属性 | 类型 | 必填  | 说明  |
+    |  ----  | ----  | ----  | ----  |
+    | shopId | string  | 是 | 商家ID |
+
+  * **callback 回调参数**
+
+    |  属性 | 类型 | 必填  | 说明  |
+    |  ----  | ----  | ----  | ----  |
+    | account | string  | 是 | 账号 |
+    | avatar | string  | 是 | 商家头像URL |
+    | name | string  | 是 | 商家名称 |
+
+* `POPQuerySessionStatus(options, callback)` (Android)
+
+  平台版获取会话状态。
+
+  * **options 参数**
+
+    |  属性 | 类型 | 必填  | 说明  |
+    |  ----  | ----  | ----  | ----  |
+    | shopId | string  | 是 | 商家ID |
+
+  * **callback 回调参数**
+
+    |  属性 | 类型 | 必填  | 说明  |
+    |  ----  | ----  | ----  | ----  |
+    | status | string  | 是 | NONE 未知，IN_SESSION 正在聊天，IN_QUEUE 正在排队 |
+
+* `POPDeleteSession(options)` (Android)
+
+  删除最近联系商家记录。
+
+  * **options 参数**
+
+    |  属性 | 类型 | 必填  | 说明  |
+    |  ----  | ----  | ----  | ----  |
+    | shopId | string  | 是 | 商家ID |
+    | clearMsgHistory | boolean  | 是 | 是否同时清空消息记录 |
+
+* `POPDeleteRecentSessionByShopId(options)`（IOS）
+
+  七鱼平台删除会话项, 删除会话列表中的会话。
+
+  * **options 参数**
+
+    |  属性 | 类型 | 必填  | 说明  |
+    |  ----  | ----  | ----  | ----  |
+    | shopId | string  | 是 | 商家ID |
+    | deleteMessages | boolean  | 是 | 是否同时清空消息记录 |
+
 ### 工单
 
 * `openUserWorkSheetActivity(options)`
@@ -861,6 +1144,23 @@ qiyukfModule.openService({
     | templateIds | number[] | 是 | 工单模板 id |
     | isOpenUrge | boolean | 是 | 是否打开催单功能 |
     | shopId | string | 是 | 如果是平台版本传递 shopId，如果是非平台可以为空 |
+  
+  * IOS 将结果以字符串形式返回。
+
+* `presentWorkOrderViewControllerWithTemplateID(options)`（iOS）
+
+  弹出工单页面自助提工单。
+  
+  * **options 参数**
+
+    |  属性 | 类型 | 必填  | 说明  |
+    |  ----  | ----  | ----  | ----  |
+    | shopId | string  | 否 | 平台版是你需要请求的商家ID，普通版可以为空 |
+    | templateID | number  | 是 | 工单模板 id |
+
+  * **返回参数**
+
+    类型 string。
 
 ### 自定义界面
 

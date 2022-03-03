@@ -1709,7 +1709,7 @@ public class QiyukfModule extends WXModule {
 
         if(options.containsKey("notificationColor"))
             statusBarNotificationConfig.notificationColor = UniResourceUtils.getColor(options.getString("notificationColor"));
-        if(options.containsKey("notificationColor"))
+        if(options.containsKey("notificationSound"))
             statusBarNotificationConfig.notificationSound = options.getString("notificationSound");
         if(options.containsKey("notificationSmallIconId"))
             statusBarNotificationConfig.notificationSmallIconId = MResource.getIdByName(AppProxy.getAppContext(), "drawable", options.getString("notificationSmallIconId"));
