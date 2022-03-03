@@ -42,6 +42,10 @@
         "QYSDK.framework",
         "MapKit.framework"
       ],
+      "embedFrameworks": [
+        "NIMSDK.framework",
+        "QYSDK.framework"
+      ],
       "integrateType": "framework",
       "deploymentTarget": "9.0",
       "parameters": {
