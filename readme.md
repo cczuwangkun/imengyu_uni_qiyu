@@ -99,7 +99,7 @@ qiyukfModule.openService({
 
 * `clearCache()`
 
-  通知栏消息提醒开关控制。
+  清空七鱼缓存文件, 不会清空聊天记录。
 
 ### 打开客服窗口
 
@@ -128,6 +128,8 @@ qiyukfModule.openService({
       | sessionListEntrance | `SessionListEntrance` | 否 | 会话列表入口信息 如果为 null ，则不显示会话列表入口 |
       | prompt | string  | 否 | 连接专属客服成功时候的提示语 |
       | custom | string  | 否 | 可自定义传入的字符串，比如商品详细信息，用户操作状态等等, 在分配客服时该字段会传递给客服。 |
+      | sourceTitle | string  | 否 | 来源标题 |
+      | sourceUrl | string  | 否 | 来源链接 此处不做链接相关校验，可传任意字符串 |
       | VIPStaffAvatarUrl | string  | 否 | 专属客服头像的 url ，如果配置了该字段，那么与这个客服聊天的消息都会为这个字段 |
       | vipStaffName | string  | 否 | 专属客服的名字 |
       | vipStaffWelcomeMsg | string  | 否 | 专属客服的欢迎语 |
@@ -562,7 +564,7 @@ qiyukfModule.openService({
       | notificationFoldStyle | string  | 否 | ALL, CONTACT, EXPAND |
       | notificationExtraType | string  | 否 | MESSAGE, JSON_ARR_STR  |
 
-* **IOS通知栏新消息**的点击处理可以调用 setCustomEventsHandler 设置自定义事件处理，你需要处理 NotificationClick 事件，请参考 setCustomEventsHandler 。
+* **IOS通知栏新消息**的点击处理可以调用 setCustomEventsHandler 设置自定义事件处理，你需要处理 NotificationClick 事件，请参考 setCustomEventsHandler ，或者是打开客服时监听回调的 ReceiveMessage 事件。
 
 #### 获取最后一条消息
 
