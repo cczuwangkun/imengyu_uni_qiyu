@@ -1,7 +1,7 @@
 {
   "name": "imengyu-Qiyukf",
   "id": "imengyu-Qiyukf",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "七鱼客服扩展模块",
   "_dp_type": "nativeplugin",
   "_dp_nativeplugin": {
@@ -17,6 +17,7 @@
       "minSdkVersion": "21",
       "hooksClass": "uni.imengyu.qiyu.AppProxy",
       "dependencies": [
+        "androidx.constraintlayout:constraintlayout:2.0.4",
         "com.qiyukf.unicorn:unicorn:7.1.0",
         "com.squareup.okhttp3:okhttp:4.9.3",
         "com.zhy:okhttputils:2.6.2"
