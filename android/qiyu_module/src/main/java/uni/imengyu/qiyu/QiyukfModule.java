@@ -909,10 +909,19 @@ public class QiyukfModule extends WXModule {
     @Keep
     @UniJSMethod()
     public void openService(JSONObject options, final JSCallback eventBus) {
-        options.put("key", "InternalCs");
-
-        if(!openedConsultSource.containsKey("InternalCs"))
-            createConsultSource(options);
+        try {
+            options.put("key", "InternalCs");
+            if (!openedConsultSource.containsKey("InternalCs"))
+                createConsultSource(options);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JSONObject result = new JSONObject();
+            result.put("type", "OpenServiceResult");
+            result.put("success", false);
+            result.put("errMsg", "Please report bug, thank you! Exception: " + e.getLocalizedMessage());
+            eventBus.invoke(result);
+            return;
+        }
 
         POPOpenService(options, eventBus);
     }
@@ -1026,7 +1035,7 @@ public class QiyukfModule extends WXModule {
             JSONObject result = new JSONObject();
             result.put("type", "OpenServiceResult");
             result.put("success", false);
-            result.put("errMsg", "Exception: " + e.getLocalizedMessage());
+            result.put("errMsg", "Please report bug, thank you! Exception: " + e.getLocalizedMessage());
             eventBus.invoke(result);
         }
     }
