@@ -1,7 +1,7 @@
 {
   "name": "imengyu-Qiyukf",
   "id": "imengyu-Qiyukf",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "七鱼客服扩展模块",
   "_dp_type": "nativeplugin",
   "_dp_nativeplugin": {
@@ -35,7 +35,7 @@
         {
           "type": "module",
           "name": "imengyu-Qiyukf-QiyukfModule",
-          "class": "QiyukfModule"
+          "class": "QiyuModule"
         }
       ],
       "frameworks": [
