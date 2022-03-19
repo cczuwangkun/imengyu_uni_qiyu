@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.ydt.ydtapp.app">
+    package="com.imengyu.qiyutest">
 
     <supports-screens
         android:anyDensity="true"
@@ -34,7 +34,7 @@
     <!-- Barcode(二维码)  end -->
 
     <application
-        android:name="io.dcloud.PandoraApplication"
+        android:name="io.dcloud.application.DCloudApplication"
         android:allowBackup="true"
         android:allowClearUserData="true"
         android:icon="@drawable/icon"
@@ -88,7 +88,7 @@
         </activity>
         <provider
             android:name="io.dcloud.common.util.DCloud_FileProvider"
-            android:authorities="com.ydt.ydtapp.app.dc.fileprovider"
+            android:authorities="com.imengyu.qiyutest.dc.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -96,10 +96,14 @@
                 android:resource="@xml/dcloud_file_provider" />
         </provider>
 
+        <meta-data
+            android:name="ImengyuQiyukf_appKey"
+            android:value="770e14709b55e97502261a2987947255" />
+
         <!-- dcloud_appkey -->
         <meta-data
             android:name="dcloud_appkey"
-            android:value="ba9369e39280d5ee77ca1bd9ab7cf12a" />
+            android:value="cad387ba0c2a5fb79f2b22aa21f507e2" />
 
     </application>
 
